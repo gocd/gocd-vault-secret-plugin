@@ -1,0 +1,85 @@
+/*
+ * Copyright 2019 ThoughtWorks, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'java'
+apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
+
+gocdPlugin {
+  id = 'com.thoughtworks.gocd.secretmanager.vault'
+  pluginVersion = '0.0.1'
+  goCdVersion = '19.3.0'
+  name = 'Vault as secret manager'
+  description = 'The plugin allows to use hashicorp vault as secret manager for the GoCD server'
+  vendorName = 'ThoughtWorks, Inc.'
+  vendorUrl = 'https://github.com/gocd-private/gocd-vault-secret-plugin'
+
+  githubRepo {
+    owner = System.getenv('GITHUB_USER') ?: 'bob'
+    repo = 'gocd-vault-secret-plugin'
+    token = System.getenv('GITHUB_TOKEN') ?: 'bad-token'
+  }
+
+  pluginProject = project
+
+  prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
+  assetsToRelease = [project.tasks.findByName('jar')]
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = gocdPlugin.fullVersion(project)
+
+repositories {
+  mavenCentral()
+}
+
+sourceSets {
+  test {
+    java {
+      compileClasspath += configurations.compileOnly
+      runtimeClasspath += configurations.compileOnly
+    }
+  }
+
+  integrationTest {
+    compileClasspath += main.output + configurations.compileOnly
+    runtimeClasspath += main.output + configurations.compileOnly
+  }
+}
+
+dependencies {
+  compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '19.1.0'
+  compile group: 'com.bettercloud', name: 'vault-java-driver', version: '4.0.0'
+
+  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.1'
+  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.4.1'
+  testCompile group: 'org.assertj', name: 'assertj-core', version: '3.12.2'
+  testCompile group: 'org.mockito', name: 'mockito-core', version: '2.25.1'
+  testCompile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
+  testCompile group: 'cd.go.plugin', name: 'go-plugin-api', version: '19.1.0'
+}
+
+jar {
+  from(configurations.compile) {
+    into "lib/"
+  }
+
+//    from(sourceSets.main.java) {
+//        into "/"
+//    }
+}
+
