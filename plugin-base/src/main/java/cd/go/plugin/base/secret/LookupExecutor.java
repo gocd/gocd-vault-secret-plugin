@@ -14,6 +14,21 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base.secret;
 
-include ':plugin-base'
+import cd.go.plugin.base.executors.Executor;
+import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
+import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+
+public abstract class LookupExecutor<T> implements Executor {
+
+    @Override
+    public GoPluginApiResponse execute(GoPluginApiRequest request) {
+        final T parsedRequest = parseRequest(request.requestBody());
+        return execute(parsedRequest);
+    }
+
+    protected abstract GoPluginApiResponse execute(T request);
+
+    protected abstract T parseRequest(String body);
+}

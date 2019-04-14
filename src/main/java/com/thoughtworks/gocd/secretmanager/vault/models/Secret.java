@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package com.thoughtworks.gocd.secretmanager.vault.models;
 
-include ':plugin-base'
+import com.google.gson.annotations.Expose;
+
+public class Secret {
+    @Expose
+    private String key;
+    @Expose
+    private String value;
+
+    Secret(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+}

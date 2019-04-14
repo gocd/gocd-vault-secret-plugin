@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base.validation;
 
-include ':plugin-base'
+import com.google.gson.annotations.Expose;
+
+public class ValidationError {
+    @Expose
+    private String key;
+    @Expose
+    private String message;
+
+    ValidationError(String key, String message) {
+        this.key = key;
+        this.message = message;
+    }
+}

@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base.executors;
 
-include ':plugin-base'
+import java.util.Optional;
+
+public class IconRequestExecutor extends ResourceRequestExecutor {
+    private final String contentType;
+
+    public IconRequestExecutor(String resourcePath, String contentType) {
+        super("data", resourcePath);
+        this.contentType = contentType;
+    }
+
+    @Override
+    Optional<String> getContentType() {
+        return Optional.ofNullable(contentType);
+    }
+}

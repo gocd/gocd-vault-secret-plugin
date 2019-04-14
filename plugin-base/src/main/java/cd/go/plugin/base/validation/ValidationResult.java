@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base.validation;
 
-include ':plugin-base'
+import java.util.ArrayList;
+
+public class ValidationResult extends ArrayList<ValidationError> {
+    public void merge(ValidationResult validationResult) {
+        this.addAll(validationResult);
+    }
+
+    public boolean add(String key, String message) {
+        return add(new ValidationError(key, message));
+    }
+}

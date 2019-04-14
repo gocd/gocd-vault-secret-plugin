@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base.annotations;
 
-include ':plugin-base'
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Property {
+    String name();
+
+    String displayName() default "";
+
+    boolean required() default false;
+
+    boolean secure() default false;
+
+}

@@ -14,6 +14,21 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base;
 
-include ':plugin-base'
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+public class GsonTransformer {
+    private static final Gson GSON = new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .create();
+
+    public static <T> T fromJson(String json, Class<T> type) {
+        return GSON.fromJson(json, type);
+    }
+
+    public static String toJson(Object object) {
+        return GSON.toJson(object);
+    }
+}

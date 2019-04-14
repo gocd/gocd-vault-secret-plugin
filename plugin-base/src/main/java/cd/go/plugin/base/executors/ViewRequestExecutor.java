@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base.executors;
 
-include ':plugin-base'
+public class ViewRequestExecutor extends ResourceRequestExecutor {
+    public ViewRequestExecutor(String resourcePath) {
+        this("template", resourcePath);
+    }
+
+    public ViewRequestExecutor(String key, String resourcePath) {
+        super(key, resourcePath);
+    }
+}

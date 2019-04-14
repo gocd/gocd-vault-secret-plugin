@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base;
 
-include ':plugin-base'
+public interface DispatcherBuilder {
+    String REQUEST_GET_ICON = "go.cd.secrets.get-icon";
+
+    String PLUGIN_SETTINGS_GET_VIEW = "go.plugin-settings.get-view";
+    String PLUGIN_SETTINGS_GET_CONFIGURATION = "go.plugin-settings.get-configuration";
+    String PLUGIN_SETTINGS_VALIDATE_CONFIGURATION = "go.plugin-settings.validate-configuration";
+}

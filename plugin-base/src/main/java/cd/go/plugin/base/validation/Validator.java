@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-vault-secret-plugin'
+package cd.go.plugin.base.validation;
 
-include ':plugin-base'
+import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
+
+public interface Validator {
+    ValidationResult validate(GoPluginApiRequest request);
+}
