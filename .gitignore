@@ -7,3 +7,4 @@ build
 out
 plugin-base/out
 src/main/resources-generated/
+gocd-vault-secret-plugin.iml

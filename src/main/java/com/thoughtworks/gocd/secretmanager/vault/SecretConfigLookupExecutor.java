@@ -47,7 +47,7 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
             final Vault vault = clientFactory.create(request.getConfiguration());
 
             final Map<String, String> secretsFromVault = vault.logical()
-                    .read(request.getConfiguration().getBasePath())
+                    .read(request.getConfiguration().getVaultKey())
                     .getData();
 
             for (String key : request.getKeys()) {

@@ -18,40 +18,49 @@ package com.thoughtworks.gocd.secretmanager.vault.models;
 
 import cd.go.plugin.base.annotations.Property;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Objects;
 
 public class SecretConfig {
     @Expose
-    @Property(name = "vaultUrl", required = true)
+    @SerializedName("VaultUrl")
+    @Property(name = "VaultUrl", required = true)
     private String vaultUrl;
 
     @Expose
-    @Property(name = "token", required = true, secure = true)
+    @SerializedName("Token")
+    @Property(name = "Token", required = true, secure = true)
     private String token;
 
     @Expose
-    @Property(name = "basePath", required = true)
-    private String basePath;
+    @SerializedName("VaultKey")
+    @Property(name = "VaultKey", required = true)
+    private String vaultKey;
 
     @Expose
-    @Property(name = "connectionTimeout")
+    @SerializedName("ConnectionTimeout")
+    @Property(name = "ConnectionTimeout")
     private Integer connectionTimeout = 5;
 
     @Expose
-    @Property(name = "readTimeout")
+    @SerializedName("ReadTimeout")
+    @Property(name = "ReadTimeout")
     private Integer readTimeout = 30;
 
     @Expose
-    @Property(name = "clientKeyPem")
+    @SerializedName("ClientKeyPem")
+    @Property(name = "ClientKeyPem")
     private String clientKeyPem;
 
     @Expose
-    @Property(name = "clientPem")
+    @SerializedName("ClientPem")
+    @Property(name = "ClientPem")
     private String clientPem;
 
     @Expose
-    @Property(name = "serverPem")
+    @SerializedName("ServerPem")
+    @Property(name = "ServerPem")
     private String serverPem;
 
     public String getVaultUrl() {
@@ -62,8 +71,8 @@ public class SecretConfig {
         return token;
     }
 
-    public String getBasePath() {
-        return basePath;
+    public String getVaultKey() {
+        return vaultKey;
     }
 
     public Integer getConnectionTimeout() {
@@ -93,7 +102,7 @@ public class SecretConfig {
         SecretConfig that = (SecretConfig) o;
         return Objects.equals(vaultUrl, that.vaultUrl) &&
                 Objects.equals(token, that.token) &&
-                Objects.equals(basePath, that.basePath) &&
+                Objects.equals(vaultKey, that.vaultKey) &&
                 Objects.equals(connectionTimeout, that.connectionTimeout) &&
                 Objects.equals(readTimeout, that.readTimeout) &&
                 Objects.equals(clientKeyPem, that.clientKeyPem) &&
@@ -103,6 +112,6 @@ public class SecretConfig {
 
     @Override
     public int hashCode() {
-        return Objects.hash(vaultUrl, token, basePath, connectionTimeout, readTimeout, clientKeyPem, clientPem, serverPem);
+        return Objects.hash(vaultUrl, token, vaultKey, connectionTimeout, readTimeout, clientKeyPem, clientPem, serverPem);
     }
 }
