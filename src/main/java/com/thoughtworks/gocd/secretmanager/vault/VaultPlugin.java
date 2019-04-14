@@ -30,6 +30,8 @@ import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
+import static java.util.Collections.singletonList;
+
 @Extension
 public class VaultPlugin implements GoPlugin {
     private RequestDispatcher requestDispatcher;
@@ -38,7 +40,6 @@ public class VaultPlugin implements GoPlugin {
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
         requestDispatcher = RequestDispatcherBuilder
                 .forSecret(goApplicationAccessor)
-                .supportedVersions("1.0")
                 .icon("/plugin-icon.png", "image/png")
                 .configMetadata(SecretConfig.class)
                 .configView("/secrets.template.html")
@@ -54,6 +55,6 @@ public class VaultPlugin implements GoPlugin {
 
     @Override
     public GoPluginIdentifier pluginIdentifier() {
-        return requestDispatcher.getPluginIdentifier();
+        return new GoPluginIdentifier("secrets", singletonList("1.0"));
     }
 }

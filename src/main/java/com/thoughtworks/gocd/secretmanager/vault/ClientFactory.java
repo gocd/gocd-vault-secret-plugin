@@ -33,8 +33,8 @@ public class ClientFactory {
 
     public Vault create(SecretConfig secretConfig) throws VaultException {
         if (!secretConfig.equals(this.secretConfig)) {
-            vault = new Vault(vaultConfigBuilder.from(this.secretConfig));
             this.secretConfig = secretConfig;
+            vault = new Vault(vaultConfigBuilder.from(this.secretConfig));
         }
 
         return vault;

@@ -33,7 +33,7 @@ public class SecretPluginRequestDispatcherBuilder extends RequestDispatcherBuild
     private static final String REQUEST_VERIFY_CONNECTION = "go.cd.secrets.secrets-config.verify-connection";
 
     public SecretPluginRequestDispatcherBuilder(GoApplicationAccessor accessor) {
-        super("secrets", accessor);
+        super(accessor);
     }
 
     public SecretPluginRequestDispatcherBuilder icon(String path, String contentType) {

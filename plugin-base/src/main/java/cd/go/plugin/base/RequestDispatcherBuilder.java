@@ -19,24 +19,15 @@ package cd.go.plugin.base;
 import cd.go.plugin.base.executors.Executor;
 import cd.go.plugin.base.secret.SecretPluginRequestDispatcherBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
-import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public abstract class RequestDispatcherBuilder<T extends RequestDispatcherBuilder> implements DispatcherBuilder {
     protected final Map<String, Executor> dispatcherRegistry = new HashMap<>();
-    private final String extensionName;
     private final GoApplicationAccessor accessor;
-    private GoPluginIdentifier pluginIdentifier;
 
-
-    public RequestDispatcherBuilder(String extensionName, GoApplicationAccessor accessor) {
-        this.extensionName = extensionName;
+    public RequestDispatcherBuilder(GoApplicationAccessor accessor) {
         this.accessor = accessor;
     }
 
@@ -50,22 +41,6 @@ public abstract class RequestDispatcherBuilder<T extends RequestDispatcherBuilde
     }
 
     public RequestDispatcher build() {
-        return new RequestDispatcher(pluginIdentifier, dispatcherRegistry, accessor);
-    }
-
-    public T supportedVersions(String version, String... versions) {
-        if (version == null || version.trim().isEmpty()) {
-            throw new RuntimeException("Supported version(s) must not be blank.");
-        }
-
-        final List<String> allSupportedVersions = new ArrayList<>();
-        allSupportedVersions.add(version);
-
-        if (versions != null) {
-            allSupportedVersions.addAll(Stream.of(versions).collect(Collectors.toSet()));
-        }
-
-        pluginIdentifier = new GoPluginIdentifier(extensionName, allSupportedVersions);
-        return (T) this;
+        return new RequestDispatcher(dispatcherRegistry, accessor);
     }
 }

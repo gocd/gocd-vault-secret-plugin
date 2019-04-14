@@ -18,7 +18,6 @@ package cd.go.plugin.base;
 
 import cd.go.plugin.base.executors.Executor;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
-import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
 import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
@@ -29,10 +28,8 @@ import java.util.Optional;
 public class RequestDispatcher {
     private final Map<String, Executor> dispatcherRegistry;
     private final GoApplicationAccessor accessor;
-    private GoPluginIdentifier pluginIdentifier;
 
-    RequestDispatcher(GoPluginIdentifier pluginIdentifier, Map<String, Executor> dispatcherRegistry, GoApplicationAccessor accessor) {
-        this.pluginIdentifier = pluginIdentifier;
+    RequestDispatcher(Map<String, Executor> dispatcherRegistry, GoApplicationAccessor accessor) {
         this.accessor = accessor;
         this.dispatcherRegistry = dispatcherRegistry;
     }
@@ -43,9 +40,5 @@ public class RequestDispatcher {
 
         return executorOptional.map(executor -> executor.execute(request))
                 .orElseThrow(() -> new UnhandledRequestTypeException(request.requestName()));
-    }
-
-    public GoPluginIdentifier getPluginIdentifier() {
-        return pluginIdentifier;
     }
 }

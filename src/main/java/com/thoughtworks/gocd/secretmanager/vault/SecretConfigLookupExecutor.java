@@ -16,7 +16,6 @@
 
 package com.thoughtworks.gocd.secretmanager.vault;
 
-import cd.go.plugin.base.GsonTransformer;
 import cd.go.plugin.base.secret.LookupExecutor;
 import com.bettercloud.vault.Vault;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
@@ -25,6 +24,10 @@ import com.thoughtworks.gocd.secretmanager.vault.models.Secrets;
 import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
 
 import java.util.Map;
+
+import static cd.go.plugin.base.GsonTransformer.fromJson;
+import static cd.go.plugin.base.GsonTransformer.toJson;
+import static java.util.Collections.singletonMap;
 
 class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
     private final ClientFactory clientFactory;
@@ -53,15 +56,15 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
                 }
             }
 
-            return DefaultGoPluginApiResponse.success(GsonTransformer.toJson(secrets));
+            return DefaultGoPluginApiResponse.success(toJson(secrets));
         } catch (Exception e) {
             LOGGER.error("Failed to lookup secret from vault.", e);
-            return DefaultGoPluginApiResponse.error("Failed to lookup secrets form vault. See logs for more information.");
+            return DefaultGoPluginApiResponse.error(toJson(singletonMap("message", "Failed to lookup secrets form vault. See logs for more information.")));
         }
     }
 
     @Override
     protected SecretConfigRequest parseRequest(String body) {
-        return GsonTransformer.fromJson(body, SecretConfigRequest.class);
+        return fromJson(body, SecretConfigRequest.class);
     }
 }
