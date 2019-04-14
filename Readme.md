@@ -1,6 +1,13 @@
 # Vault secret manager plugin
 The plugin allows users to use [Vault](https://learn.hashicorp.com/vault/) as a secret manger for the GoCD server.
 
+### TODO
+- [ ] Add license file
+- [ ] Update license header of the code
+- [ ] Update secret config view template
+- [ ] Add support for other type of secrets
+- [ ] Evaluate the role support and how it works
+
 ### Setup vault
 1. Run following command to start docker container for vault
 ```bash
