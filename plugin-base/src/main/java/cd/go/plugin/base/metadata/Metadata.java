@@ -34,6 +34,18 @@ public class Metadata {
         this.secure = secure;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public boolean isSecure() {
+        return secure;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

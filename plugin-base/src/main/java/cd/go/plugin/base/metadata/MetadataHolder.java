@@ -36,6 +36,14 @@ public class MetadataHolder {
         this.metadata = new Metadata(displayName, secure, required);
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

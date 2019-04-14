@@ -28,4 +28,12 @@ public class ValidationError {
         this.key = key;
         this.message = message;
     }
+
+    @Override
+    public String toString() {
+        return "ValidationError{" +
+                "key='" + key + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

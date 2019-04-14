@@ -6,3 +6,4 @@ build
 .idea
 out
 plugin-base/out
+src/main/resources-generated/

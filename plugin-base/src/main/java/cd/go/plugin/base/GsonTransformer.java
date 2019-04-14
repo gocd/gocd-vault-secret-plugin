@@ -19,12 +19,18 @@ package cd.go.plugin.base;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.lang.reflect.Type;
+
 public class GsonTransformer {
     private static final Gson GSON = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
             .create();
 
     public static <T> T fromJson(String json, Class<T> type) {
+        return GSON.fromJson(json, type);
+    }
+
+    public static <T> T fromJson(String json, Type type) {
         return GSON.fromJson(json, type);
     }
 
