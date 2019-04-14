@@ -21,6 +21,7 @@ import cd.go.plugin.base.executors.IconRequestExecutor;
 import cd.go.plugin.base.executors.MetadataExecutor;
 import cd.go.plugin.base.executors.ValidationExecutor;
 import cd.go.plugin.base.executors.ViewRequestExecutor;
+import cd.go.plugin.base.validation.DefaultValidator;
 import cd.go.plugin.base.validation.Validator;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 
@@ -40,6 +41,7 @@ public class SecretPluginRequestDispatcherBuilder extends RequestDispatcherBuild
     }
 
     public SecretPluginRequestDispatcherBuilder configMetadata(Class<?> configClass) {
+        register(REQUEST_VALIDATE_CONFIG, new ValidationExecutor(new DefaultValidator(configClass)));
         return register(REQUEST_GET_CONFIG_METADATA, new MetadataExecutor("", configClass));
     }
 
@@ -48,6 +50,11 @@ public class SecretPluginRequestDispatcherBuilder extends RequestDispatcherBuild
     }
 
     public SecretPluginRequestDispatcherBuilder validateSecretConfig(Validator... validators) {
+        if (dispatcherRegistry.containsKey(REQUEST_VALIDATE_CONFIG)) {
+            ((ValidationExecutor) dispatcherRegistry.get(REQUEST_VALIDATE_CONFIG)).addAll(validators);
+            return this;
+        }
+
         return register(REQUEST_VALIDATE_CONFIG, new ValidationExecutor(validators));
     }
 

@@ -20,7 +20,6 @@ import cd.go.plugin.base.metadata.MetadataExtractor;
 import cd.go.plugin.base.metadata.MetadataHolder;
 import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
-import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 import java.lang.reflect.Type;
 import java.util.HashSet;
@@ -33,24 +32,30 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class DefaultValidator implements Validator {
+    private final Class<?> secretConfigClazz;
+
+    public DefaultValidator(Class<?> secretConfigClazz) {
+        this.secretConfigClazz = secretConfigClazz;
+    }
+
     @Override
     public ValidationResult validate(GoPluginApiRequest request) {
         final Type type = new TypeToken<Map<String, String>>() {
         }.getType();
-        final Map<String, String> secretConfigs = fromJson(request.requestBody(), type);
-        final List<MetadataHolder> metadataHolders = new MetadataExtractor().forClass(SecretConfig.class);
+        final Map<String, String> requestBodyAsMap = fromJson(request.requestBody(), type);
+        final List<MetadataHolder> metadataHolders = new MetadataExtractor().forClass(this.secretConfigClazz);
 
         final ValidationResult validationResult = new ValidationResult();
         Set<String> knownFields = new HashSet<>();
         metadataHolders.forEach(metadataHolder -> {
             knownFields.add(metadataHolder.getKey());
-            final String value = secretConfigs.get(metadataHolder.getKey());
+            final String value = requestBodyAsMap.get(metadataHolder.getKey());
             if (metadataHolder.getMetadata().isRequired() && isBlank(value)) {
                 validationResult.add(metadataHolder.getKey(), format("%s must not be blank.", metadataHolder.getKey()));
             }
         });
 
-        final Set<String> unknownFields = new HashSet<>(secretConfigs.keySet());
+        final Set<String> unknownFields = new HashSet<>(requestBodyAsMap.keySet());
         unknownFields.removeAll(knownFields);
         unknownFields.forEach(field -> validationResult.add(field, "Is an unknown property"));
 

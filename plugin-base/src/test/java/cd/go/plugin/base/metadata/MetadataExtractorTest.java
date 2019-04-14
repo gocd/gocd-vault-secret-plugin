@@ -34,7 +34,7 @@ class MetadataExtractorTest {
         assertThat(metadataList)
                 .hasSize(3)
                 .contains(
-                        new MetadataHolder("name", "Name", false, true),
+                        new MetadataHolder("name", "Name", true, false),
                         new MetadataHolder("lastname", "", false, false),
                         new MetadataHolder("password", "", true, true)
                 );

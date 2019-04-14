@@ -1,0 +1,10 @@
+[
+  {
+    "key": "vaultUrl",
+    "message": "vaultUrl must not be blank."
+  },
+  {
+    "key": "token",
+    "message": "token must not be blank."
+  }
+]

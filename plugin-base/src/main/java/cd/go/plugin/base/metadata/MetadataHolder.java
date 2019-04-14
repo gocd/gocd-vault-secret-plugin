@@ -28,12 +28,12 @@ public class MetadataHolder {
     private Metadata metadata;
 
     MetadataHolder(Property property) {
-        this(property.name(), property.displayName(), property.secure(), property.required());
+        this(property.name(), property.displayName(), property.required(), property.secure());
     }
 
-    public MetadataHolder(String name, String displayName, boolean secure, boolean required) {
+    public MetadataHolder(String name, String displayName, boolean required, boolean secure) {
         this.key = name;
-        this.metadata = new Metadata(displayName, secure, required);
+        this.metadata = new Metadata(displayName, required, secure);
     }
 
     public String getKey() {

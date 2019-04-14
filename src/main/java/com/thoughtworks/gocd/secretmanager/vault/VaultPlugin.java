@@ -39,9 +39,9 @@ public class VaultPlugin implements GoPlugin {
         requestDispatcher = RequestDispatcherBuilder
                 .forSecret(goApplicationAccessor)
                 .supportedVersions("1.0")
-                .icon("/logo.png", "image/png")
+                .icon("/plugin-icon.png", "image/png")
                 .configMetadata(SecretConfig.class)
-                .configView("/view.html")
+                .configView("/secrets.template.html")
                 .validateSecretConfig()
                 .lookup(new SecretConfigLookupExecutor())
                 .build();

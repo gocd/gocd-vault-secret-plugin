@@ -39,7 +39,7 @@ public class SecretConfig {
     private Integer connectionTimeout = 5;
 
     @Expose
-    @Property(name = "connectionTimeout")
+    @Property(name = "readTimeout")
     private Integer readTimeout = 30;
 
     @Expose

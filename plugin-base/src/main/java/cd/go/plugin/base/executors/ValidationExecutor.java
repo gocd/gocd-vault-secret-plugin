@@ -17,7 +17,6 @@
 package cd.go.plugin.base.executors;
 
 import cd.go.plugin.base.GsonTransformer;
-import cd.go.plugin.base.validation.DefaultValidator;
 import cd.go.plugin.base.validation.ValidationResult;
 import cd.go.plugin.base.validation.Validator;
 import com.thoughtworks.go.plugin.api.logging.Logger;
@@ -25,30 +24,35 @@ import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse.VALIDATION_FAILED;
 import static com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse.success;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 
 public class ValidationExecutor implements Executor {
-    private static final DefaultValidator DEFAULT_VALIDATOR = new DefaultValidator();
     private static Logger LOGGER = Logger.getLoggerFor(ValidationExecutor.class);
-    private final Validator[] validators;
+    private final List<Validator> validators = new ArrayList<>();
 
     public ValidationExecutor(Validator... validators) {
-        this.validators = validators;
+        this.validators.addAll(asList(validators));
+    }
+
+    public void addAll(Validator... validators) {
+        this.validators.addAll(asList(validators));
     }
 
     @Override
     public GoPluginApiResponse execute(GoPluginApiRequest request) {
-        final ValidationResult validationResult = DEFAULT_VALIDATOR.validate(request);
-        if (validators == null || validators.length == 0) {
-            LOGGER.debug(format("No additional validator(s) are provided. Skipping the validation for request %s", request.requestName()));
+        final ValidationResult validationResult = new ValidationResult();
+        if (validators.isEmpty()) {
+            LOGGER.debug(format("No validator(s) are provided. Skipping the validation for request %s", request.requestName()));
             return success(GsonTransformer.toJson(validationResult));
         }
 
-        Arrays.stream(validators).forEach(validator -> {
+        validators.forEach(validator -> {
             if (validator != null) {
                 validationResult.merge(validator.validate(request));
             }
