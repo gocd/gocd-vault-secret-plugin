@@ -57,17 +57,16 @@ The plugin requires secret config in order to connect with vault -
 </secretConfigs>
 ```
 
-| Field             | Description                                                     |
-| ----------------- | --------------------------------------------------------------- |
-| VaultUrl          |  The url of the Vault server instance to which API calls should be sent. If no address is explicitly set, the object will look to the `VAULT_ADDR` environment variable. | 
-| Token             |  The token used to access Vault. If no token is explicitly set, then the object will look to the `VAULT_TOKEN` environment variable.| 
-| VaultKey          |  The vault key value from which to read (e.g. `secret/gocd`) | 
-| ConnectionTimeout |  The number of seconds to wait before giving up on establishing an HTTP(s) connection to the Vault server. If no openTimeout is explicitly set, then the object will look to the `VAULT_OPEN_TIMEOUT` environment variable. Defaults to `5 seconds`. | 
-| ReadTimeout       |  Once connection has already been established, this is the number of seconds to wait for all data to finish downloading. If no readTimeout is explicitly set, then the object will look to the `VAULT_READ_TIMEOUT` environment variable. Defaults to `30 seconds`. | 
-| ClientKeyPem      |  An RSA private key, in unencrypted PEM format with UTF-8 encoding. | 
-| ClientPem         |  An X.509 client certificate, in unencrypted PEM format with UTF-8 encoding. | 
-| ServerPem         |  An X.509 certificate, in unencrypted PEM format with UTF-8 encoding. | 
-
+| Field             | Required | Description                                                     |
+| ----------------- |----------| --------------------------------------------------------------- |
+| VaultUrl          | Yes      |  The url of the Vault server instance to which API calls should be sent. If no address is explicitly set, the object will look to the `VAULT_ADDR` environment variable. | 
+| Token             | Yes      |  The token used to access Vault. If no token is explicitly set, then the object will look to the `VAULT_TOKEN` environment variable.| 
+| VaultKey          | Yes      |  The vault key value from which to read (e.g. `secret/gocd`) | 
+| ConnectionTimeout | No       |  The number of seconds to wait before giving up on establishing an HTTP(s) connection to the Vault server. If no openTimeout is explicitly set, then the object will look to the `VAULT_OPEN_TIMEOUT` environment variable. Defaults to `5 seconds`. | 
+| ReadTimeout       | No       |  Once connection has already been established, this is the number of seconds to wait for all data to finish downloading. If no readTimeout is explicitly set, then the object will look to the `VAULT_READ_TIMEOUT` environment variable. Defaults to `30 seconds`. | 
+| ClientKeyPem      | No       |  An RSA private key, in unencrypted PEM format with UTF-8 encoding. | 
+| ClientPem         | No       |  An X.509 client certificate, in unencrypted PEM format with UTF-8 encoding. | 
+| ServerPem         | No       |  An X.509 certificate, in unencrypted PEM format with UTF-8 encoding. | 
 
 ### Building the code base
 To build the jar, run `./gradlew clean test assemble`
