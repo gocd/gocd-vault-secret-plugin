@@ -16,8 +16,8 @@
 
 package com.thoughtworks.gocd.secretmanager.vault;
 
-import cd.go.plugin.base.secret.LookupExecutor;
 import com.bettercloud.vault.Vault;
+import com.github.bdpiparva.plugin.base.dispatcher.LookupExecutor;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.thoughtworks.gocd.secretmanager.vault.models.Secrets;
@@ -25,8 +25,8 @@ import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
 
 import java.util.Map;
 
-import static cd.go.plugin.base.GsonTransformer.fromJson;
-import static cd.go.plugin.base.GsonTransformer.toJson;
+import static com.github.bdpiparva.plugin.base.GsonTransformer.fromJson;
+import static com.github.bdpiparva.plugin.base.GsonTransformer.toJson;
 import static java.util.Collections.singletonMap;
 
 class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {

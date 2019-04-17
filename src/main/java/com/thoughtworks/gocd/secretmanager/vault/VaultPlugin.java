@@ -19,8 +19,8 @@
  */
 package com.thoughtworks.gocd.secretmanager.vault;
 
-import cd.go.plugin.base.RequestDispatcher;
-import cd.go.plugin.base.RequestDispatcherBuilder;
+import com.github.bdpiparva.plugin.base.dispatcher.RequestDispatcher;
+import com.github.bdpiparva.plugin.base.dispatcher.RequestDispatcherBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;

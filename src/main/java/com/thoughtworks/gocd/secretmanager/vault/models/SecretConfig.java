@@ -16,7 +16,7 @@
 
 package com.thoughtworks.gocd.secretmanager.vault.models;
 
-import cd.go.plugin.base.annotations.Property;
+import com.github.bdpiparva.plugin.base.annotations.Property;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

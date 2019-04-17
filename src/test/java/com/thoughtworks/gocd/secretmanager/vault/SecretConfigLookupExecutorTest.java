@@ -33,7 +33,6 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -58,12 +57,14 @@ class SecretConfigLookupExecutorTest {
     void shouldReturnLookupResponse() throws VaultException, JSONException {
         final LogicalResponse logicalResponse = mock(LogicalResponse.class);
         final SecretConfigRequest request = mock(SecretConfigRequest.class);
-        when(logical.read(anyString())).thenReturn(logicalResponse);
+        final SecretConfig secretConfig = mock(SecretConfig.class);
+        when(logical.read("/secret/gocd")).thenReturn(logicalResponse);
         when(logicalResponse.getData()).thenReturn(new HashMap<String, String>() {{
             put("AWS_ACCESS_KEY", "ASKDMDASDKLASDI");
             put("AWS_SECRET_KEY", "slfjskldfjsdjflfsdfsffdadsdfsdfsdfsd;");
         }});
-        when(request.getConfiguration()).thenReturn(mock(SecretConfig.class));
+        when(request.getConfiguration()).thenReturn(secretConfig);
+        when(secretConfig.getVaultKey()).thenReturn("/secret/gocd");
         when(request.getKeys()).thenReturn(Arrays.asList("AWS_ACCESS_KEY", "AWS_SECRET_KEY"));
 
         final GoPluginApiResponse response = new SecretConfigLookupExecutor(clientFactory)

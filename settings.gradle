@@ -15,5 +15,3 @@
  */
 
 rootProject.name = 'gocd-vault-secret-plugin'
-
-include ':plugin-base'

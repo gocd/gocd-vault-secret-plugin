@@ -5,6 +5,6 @@
   },
   {
     "key": "Token",
-    "message": "token must not be blank."
+    "message": "Token must not be blank."
   }
 ]
