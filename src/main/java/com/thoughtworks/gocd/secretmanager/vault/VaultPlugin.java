@@ -19,8 +19,8 @@
  */
 package com.thoughtworks.gocd.secretmanager.vault;
 
+import com.github.bdpiparva.plugin.base.dispatcher.BaseBuilder;
 import com.github.bdpiparva.plugin.base.dispatcher.RequestDispatcher;
-import com.github.bdpiparva.plugin.base.dispatcher.RequestDispatcherBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
@@ -38,8 +38,9 @@ public class VaultPlugin implements GoPlugin {
 
     @Override
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
-        requestDispatcher = RequestDispatcherBuilder
-                .forSecret(goApplicationAccessor)
+        requestDispatcher = BaseBuilder
+                .forSecrets()
+                .v1()
                 .icon("/plugin-icon.png", "image/png")
                 .configMetadata(SecretConfig.class)
                 .configView("/secrets.template.html")

@@ -17,7 +17,7 @@
 package com.thoughtworks.gocd.secretmanager.vault;
 
 import com.bettercloud.vault.Vault;
-import com.github.bdpiparva.plugin.base.dispatcher.LookupExecutor;
+import com.github.bdpiparva.plugin.base.executors.secrets.LookupExecutor;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.thoughtworks.gocd.secretmanager.vault.models.Secrets;
