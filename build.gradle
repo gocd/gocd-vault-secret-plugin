@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+apply from: "/Volumes/Data/Projects/plugins/gocd-plugin-gradle-task-helpers/helper.gradle"
 apply plugin: 'java'
-apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
 
 gocdPlugin {
   id = 'com.thoughtworks.gocd.secretmanager.vault'
