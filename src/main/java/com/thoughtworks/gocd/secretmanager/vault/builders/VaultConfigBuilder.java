@@ -22,26 +22,25 @@ import com.bettercloud.vault.VaultException;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 import org.apache.commons.lang3.StringUtils;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class VaultConfigBuilder {
-    public VaultConfig from(SecretConfig secretConfig) throws VaultException {
+    public VaultConfig configFrom(SecretConfig secretConfig) throws VaultException {
         return new VaultConfig()
                 .address(secretConfig.getVaultUrl())
-                .token(secretConfig.getToken())
                 .openTimeout(secretConfig.getConnectionTimeout())
                 .readTimeout(secretConfig.getReadTimeout())
-                .sslConfig(sslConfig(secretConfig))
+                .sslConfig(sslConfig(secretConfig).build())
                 .build();
     }
 
-    private SslConfig sslConfig(SecretConfig secretConfig) throws VaultException {
-        if (StringUtils.isNoneBlank(secretConfig.getClientKeyPem(), secretConfig.getClientPem(), secretConfig.getServerPem())) {
+    protected SslConfig sslConfig(SecretConfig secretConfig) {
+        if (isNotBlank(secretConfig.getServerPem())) {
             return new SslConfig()
-                    .clientKeyPemUTF8(secretConfig.getClientKeyPem())
-                    .clientPemUTF8(secretConfig.getClientPem())
                     .pemUTF8(secretConfig.getServerPem())
-                    .verify(true)
-                    .build();
+                    .verify(true);
         }
-        return null;
+
+        return new SslConfig();
     }
 }

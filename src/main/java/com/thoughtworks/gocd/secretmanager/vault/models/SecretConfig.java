@@ -38,7 +38,7 @@ public class SecretConfig {
     public static final String APPROLE_AUTH_METHOD = "approle";
     public static final String CERT_AUTH_METHOD = "cert";
 
-    private List<String> supportedAuthMethods = asList(TOKEN_AUTH_METHOD, APPROLE_AUTH_METHOD, CERT_AUTH_METHOD);
+    public static final List<String> SUPPORTED_AUTH_METHODS = asList(TOKEN_AUTH_METHOD, APPROLE_AUTH_METHOD, CERT_AUTH_METHOD);
 
     @Expose
     @SerializedName("VaultUrl")
@@ -140,7 +140,7 @@ public class SecretConfig {
     }
 
     public boolean isAuthMethodSupported() {
-        return supportedAuthMethods.contains(authMethod.toLowerCase());
+        return SUPPORTED_AUTH_METHODS.contains(authMethod.toLowerCase());
     }
 
     public static SecretConfig fromJSON(Map<String, String>     request) {

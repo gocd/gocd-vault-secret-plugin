@@ -6,7 +6,9 @@ import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 import java.util.Map;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.join;
 
 public class AuthMethodValidator implements Validator {
     @Override
@@ -15,7 +17,7 @@ public class AuthMethodValidator implements Validator {
         ValidationResult validationResult = new ValidationResult();
 
         if (isNotEmpty(secretConfig.getAuthMethod()) && !secretConfig.isAuthMethodSupported()) {
-            validationResult.add("AuthMethod", "Invalid 'AuthMethod`, should be one of ['token', 'approle', 'cert']");
+            validationResult.add("AuthMethod", format("Invalid 'AuthMethod`, should be one of [%s]", join(SecretConfig.SUPPORTED_AUTH_METHODS, ",")));
         }
 
         return validationResult;
