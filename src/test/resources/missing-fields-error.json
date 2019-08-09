@@ -4,7 +4,7 @@
     "message": "VaultUrl must not be blank."
   },
   {
-    "key": "Token",
-    "message": "Token must not be blank."
+    "key": "AuthMethod",
+    "message": "AuthMethod must not be blank."
   }
 ]
