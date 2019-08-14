@@ -1,14 +1,15 @@
 # Vault secret manager plugin
-The plugin allows users to use [Vault](https://learn.hashicorp.com/vault/) as a secret manger for the GoCD server.
+This is a GoCD Secrets plugin which allows users to use [Vault](https://learn.hashicorp.com/vault/) as a secret manger for the GoCD server.
 
-### TODO
-- [ ] Add license file
-- [ ] Update license header of the code
-- [ ] Update secret config view template
-- [ ] Add support for other type of secrets
-- [ ] Evaluate the role support and how it works
+The plugin supports Version 2 of KV Secrets Engine.
 
-### Setup vault
+## Table of Contents
+* [Setup Vault using docker](#setup-vault-using-docker)
+* [Configure the plugin](#configure-the-plugin)
+* [Building the code base](#building-the-code-base)
+* [Troubleshooting](#troubleshooting)
+
+### Setup Vault using docker
 1. Run following command to start docker container for vault
 ```bash
 docker run --cap-add=IPC_LOCK -e VAULT_DEV_ROOT_TOKEN_ID=some-token -p8200:8200  -d --name=dev-vault vault:latest
@@ -33,7 +34,10 @@ vault kv put $BASE_PATH AWS_ACCESS_KEY=ABDASDKDLKM \
 ```
 
 ### Configure the plugin
-The plugin requires secret config in order to connect with vault -
+The plugin needs to be configured with a secret config in order to connect to Vault. The configuration can be added from
+the Secrets Management page under Admin > Secret Management.
+
+Alternatively, the configuration can be added directly to the config.xml using the <secretConfig> configuration.
 
 ```xml
 <secretConfigs>
@@ -45,28 +49,44 @@ The plugin requires secret config in order to connect with vault -
           <value>http://127.0.0.1:8200</value>
         </property>
         <property>
-          <key>token</key>
-          <value>some-token</value>
-        </property>
-        <property>
-          <key>VaultKey</key>
+          <key>VaultPath</key>
           <value>secret/gocd</value>
         </property>
+        <property>
+          <key>AuthMethod</key>
+          <value>token</value>
+        </property>
+        <property>
+          <key>Token</key>
+          <value>some-auth-token</value>
+        </property>
       </configuration>
+      <rules>
+          <allow action="refer" type="environment">env_*</allow>
+          <deny action="refer" type="pipeline_group">my_group</deny>
+          <allow action="refer" type="pipeline_group">other_group</allow>
+      </rules>
     </secretConfig>
 </secretConfigs>
 ```
 
+`<rules>` tag defines where this secretConfig is allowed/denied to be referred. For more details about rules and examples refer the GoCD Secret Management [documentation](https://docs.gocd.org/current/configuration/secrets_management.html)
+
+
 | Field             | Required | Description                                                     |
 | ----------------- |----------| --------------------------------------------------------------- |
-| VaultUrl          | Yes      |  The url of the Vault server instance to which API calls should be sent. If no address is explicitly set, the object will look to the `VAULT_ADDR` environment variable. | 
-| Token             | Yes      |  The token used to access Vault. If no token is explicitly set, then the object will look to the `VAULT_TOKEN` environment variable.| 
-| VaultKey          | Yes      |  The vault key value from which to read (e.g. `secret/gocd`) | 
+| VaultUrl          | Yes      |  The url of the Vault server instance. If no address is explicitly set, the plugin will look to the `VAULT_ADDR` environment variable. |
+| VaultPath         | Yes      |  The vault path which holds the secrets as key-value pair (e.g. `secret/gocd`) |
 | ConnectionTimeout | No       |  The number of seconds to wait before giving up on establishing an HTTP(s) connection to the Vault server. If no openTimeout is explicitly set, then the object will look to the `VAULT_OPEN_TIMEOUT` environment variable. Defaults to `5 seconds`. | 
-| ReadTimeout       | No       |  Once connection has already been established, this is the number of seconds to wait for all data to finish downloading. If no readTimeout is explicitly set, then the object will look to the `VAULT_READ_TIMEOUT` environment variable. Defaults to `30 seconds`. | 
-| ClientKeyPem      | No       |  An RSA private key, in unencrypted PEM format with UTF-8 encoding. | 
-| ClientPem         | No       |  An X.509 client certificate, in unencrypted PEM format with UTF-8 encoding. | 
-| ServerPem         | No       |  An X.509 certificate, in unencrypted PEM format with UTF-8 encoding. | 
+| ReadTimeout       | No       |  Once connection has already been established, this is the number of seconds to wait for all data to finish downloading. If no readTimeout is explicitly set, then the object will look to the `VAULT_READ_TIMEOUT` environment variable. Defaults to `30 seconds`. |
+| ServerPem         | No       |  An X.509 certificate, in unencrypted PEM format with UTF-8 encoding to use when communicating with Vault over HTTPS |
+| AuthMethod        | Yes      |  The auth method to use to authenticate with the Vault server, can be one of `token`, `approle` or `cert` |
+| Token             | No       |  Required if using `token` auth method. This is the token used to read secrets from Vault. Ensure this token has a longer ttl, the plugin will not be renewing the token. |
+| RoleId            | No       |  Required if using `approle` auth method. The plugins will use the configured `RoleId` and `SecretId` to authenticate with Vault. |
+| SecretId          | No       |  Required if using `approle` auth method. |
+| ClientKeyPem      | No       |  Required if using `cert` auth method. An RSA private key, in unencrypted PEM format with UTF-8 encoding. |
+| ClientPem         | No       |  Required if using `cert` auth method. An X.509 client certificate, in unencrypted PEM format with UTF-8 encoding. |
+
 
 ### Building the code base
 To build the jar, run `./gradlew clean test assemble`
@@ -89,32 +109,6 @@ If you're running with GoCD server 19.6 and above on docker using one of the sup
 ```shell
 docker run -e "GOCD_SERVER_JVM_OPTIONS=-Dplugin.com.thoughtworks.gocd.secretmanager.vault.log.level=debug" ...
 ```
-
-#### If you are on GoCD version 19.5 and lower:
-
-* On Linux:
-
-    Enabling debug level logging can help you troubleshoot an issue with this plugin. To enable debug level logs, edit the file `/etc/default/go-server` (for Linux) to add:
-
-    ```shell
-    export GO_SERVER_SYSTEM_PROPERTIES="$GO_SERVER_SYSTEM_PROPERTIES -Dplugin.com.thoughtworks.gocd.secretmanager.vault.log.level=debug"
-    ```
-
-    If you're running the server via `./server.sh` script:
-
-    ```shell
-    $ GO_SERVER_SYSTEM_PROPERTIES="-Dplugin.com.thoughtworks.gocd.secretmanager.vault.log.level=debug" ./server.sh
-    ```
-
-* On windows:
-
-    Edit the file `config/wrapper-properties.conf` inside the GoCD Server installation directory (typically `C:\Program Files\Go Server`):
-
-    ```
-    # config/wrapper-properties.conf
-    # since the last "wrapper.java.additional" index is 15, we use the next available index.
-    wrapper.java.additional.16=-Dplugin.com.thoughtworks.gocd.secretmanager.vault.log.level=debug
-    ```
 
 The plugin logs are written to `LOG_DIR/plugin-com.thoughtworks.gocd.secretmanager.vault.log`. The log dir 
 - on Linux is `/var/log/go-server`
