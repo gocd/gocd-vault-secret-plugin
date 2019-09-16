@@ -3,7 +3,8 @@
 
 # Ignore Gradle build output directory
 build
-.idea
+.idea/
+!.idea/copyright/
 out
 plugin-base/out
 src/main/resources-generated/
