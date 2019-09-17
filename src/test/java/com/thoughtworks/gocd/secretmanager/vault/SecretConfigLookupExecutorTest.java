@@ -40,7 +40,7 @@ import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 class SecretConfigLookupExecutorTest {
     @Mock
-    private ClientFactory clientFactory;
+    private VaultProvider vaultProvider;
     @Mock
     private Vault vault;
     @Mock
@@ -49,7 +49,7 @@ class SecretConfigLookupExecutorTest {
     @BeforeEach
     void setUp() throws VaultException {
         initMocks(this);
-        when(clientFactory.create(any())).thenReturn(vault);
+        when(vaultProvider.vaultFor(any())).thenReturn(vault);
         when(vault.logical()).thenReturn(logical);
     }
 
@@ -64,10 +64,10 @@ class SecretConfigLookupExecutorTest {
             put("AWS_SECRET_KEY", "slfjskldfjsdjflfsdfsffdadsdfsdfsdfsd;");
         }});
         when(request.getConfiguration()).thenReturn(secretConfig);
-        when(secretConfig.getVaultKey()).thenReturn("/secret/gocd");
+        when(secretConfig.getVaultPath()).thenReturn("/secret/gocd");
         when(request.getKeys()).thenReturn(Arrays.asList("AWS_ACCESS_KEY", "AWS_SECRET_KEY"));
 
-        final GoPluginApiResponse response = new SecretConfigLookupExecutor(clientFactory)
+        final GoPluginApiResponse response = new SecretConfigLookupExecutor(vaultProvider)
                 .execute(request);
 
         assertThat(response.responseCode()).isEqualTo(200);

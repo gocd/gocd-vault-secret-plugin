@@ -31,7 +31,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 import java.util.Map;
 
-import static com.github.bdpiparva.plugin.base.ResourceReader.readResourceBytes;
+import static cd.go.plugin.base.ResourceReader.readResource;
+import static cd.go.plugin.base.ResourceReader.readResourceBytes;
 import static java.util.Base64.getDecoder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -89,7 +90,7 @@ class VaultPluginTest {
 
         assertThat(response.responseCode()).isEqualTo(200);
         assertThat(responseBody.size()).isEqualTo(1);
-        assertThat(getDecoder().decode(responseBody.get("template"))).isEqualTo(readResourceBytes("/secrets.template.html"));
+        assertThat(responseBody.get("template")).isEqualTo(readResource("/secrets.template.html"));
     }
 
     @Nested
@@ -112,7 +113,7 @@ class VaultPluginTest {
 
             final GoPluginApiResponse response = vaultPlugin.handle(request);
 
-            assertThat(response.responseCode()).isEqualTo(412);
+            assertThat(response.responseCode()).isEqualTo(200);
             assertEquals(expected, response.responseBody(), true);
         }
 
@@ -127,7 +128,7 @@ class VaultPluginTest {
 
             final GoPluginApiResponse response = vaultPlugin.handle(request);
 
-            assertThat(response.responseCode()).isEqualTo(412);
+            assertThat(response.responseCode()).isEqualTo(200);
             assertEquals(expected, response.responseBody(), true);
         }
 

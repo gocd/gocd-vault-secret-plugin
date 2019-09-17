@@ -19,8 +19,8 @@
  */
 package com.thoughtworks.gocd.secretmanager.vault;
 
-import com.github.bdpiparva.plugin.base.dispatcher.BaseBuilder;
-import com.github.bdpiparva.plugin.base.dispatcher.RequestDispatcher;
+import cd.go.plugin.base.dispatcher.BaseBuilder;
+import cd.go.plugin.base.dispatcher.RequestDispatcher;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
@@ -29,6 +29,10 @@ import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
+import com.thoughtworks.gocd.secretmanager.vault.validation.AppRoleAuthMethodValidator;
+import com.thoughtworks.gocd.secretmanager.vault.validation.AuthMethodValidator;
+import com.thoughtworks.gocd.secretmanager.vault.validation.CertAuthMethodValidator;
+import com.thoughtworks.gocd.secretmanager.vault.validation.TokenAuthMethodValidator;
 
 import static java.util.Collections.singletonList;
 
@@ -44,7 +48,8 @@ public class VaultPlugin implements GoPlugin {
                 .icon("/plugin-icon.png", "image/png")
                 .configMetadata(SecretConfig.class)
                 .configView("/secrets.template.html")
-                .validateSecretConfig()
+                .validateSecretConfig(new AuthMethodValidator(), new CertAuthMethodValidator(),
+                        new AppRoleAuthMethodValidator(), new TokenAuthMethodValidator())
                 .lookup(new SecretConfigLookupExecutor())
                 .build();
     }

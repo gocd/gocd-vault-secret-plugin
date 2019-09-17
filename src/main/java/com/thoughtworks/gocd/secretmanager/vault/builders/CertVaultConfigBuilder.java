@@ -17,30 +17,21 @@
 package com.thoughtworks.gocd.secretmanager.vault.builders;
 
 import com.bettercloud.vault.SslConfig;
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
-import org.apache.commons.lang3.StringUtils;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-public class VaultConfigBuilder {
-    public VaultConfig configFrom(SecretConfig secretConfig) throws VaultException {
-        return new VaultConfig()
-                .address(secretConfig.getVaultUrl())
-                .openTimeout(secretConfig.getConnectionTimeout())
-                .readTimeout(secretConfig.getReadTimeout())
-                .sslConfig(sslConfig(secretConfig).build())
-                .build();
-    }
-
+public class CertVaultConfigBuilder extends VaultConfigBuilder {
+    @Override
     protected SslConfig sslConfig(SecretConfig secretConfig) {
-        if (isNotBlank(secretConfig.getServerPem())) {
-            return new SslConfig()
-                    .pemUTF8(secretConfig.getServerPem())
-                    .verify(true);
+        SslConfig sslConfig = super.sslConfig(secretConfig);
+
+        if (isNotBlank(secretConfig.getClientKeyPem()) && isNotBlank(secretConfig.getClientPem())) {
+            sslConfig.clientPemUTF8(secretConfig.getClientPem());
+            sslConfig.clientKeyPemUTF8(secretConfig.getClientKeyPem());
         }
 
-        return new SslConfig();
+        return sslConfig;
     }
 }
+

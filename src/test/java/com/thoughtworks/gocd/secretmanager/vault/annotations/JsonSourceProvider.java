@@ -16,7 +16,7 @@
 
 package com.thoughtworks.gocd.secretmanager.vault.annotations;
 
-import com.github.bdpiparva.plugin.base.ResourceReader;
+import cd.go.plugin.base.ResourceReader;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;

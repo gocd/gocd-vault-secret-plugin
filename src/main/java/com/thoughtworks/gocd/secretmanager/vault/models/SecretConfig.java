@@ -16,27 +16,39 @@
 
 package com.thoughtworks.gocd.secretmanager.vault.models;
 
-import com.github.bdpiparva.plugin.base.annotations.Property;
+import cd.go.plugin.base.GsonTransformer;
+import cd.go.plugin.base.annotations.Property;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Arrays.asList;
+
 public class SecretConfig {
+    private static final Gson GSON = new GsonBuilder().
+            excludeFieldsWithoutExposeAnnotation().
+            create();
+
+    public static final String TOKEN_AUTH_METHOD = "token";
+    public static final String APPROLE_AUTH_METHOD = "approle";
+    public static final String CERT_AUTH_METHOD = "cert";
+
+    public static final List<String> SUPPORTED_AUTH_METHODS = asList(TOKEN_AUTH_METHOD, APPROLE_AUTH_METHOD, CERT_AUTH_METHOD);
+
     @Expose
     @SerializedName("VaultUrl")
     @Property(name = "VaultUrl", required = true)
     private String vaultUrl;
 
     @Expose
-    @SerializedName("Token")
-    @Property(name = "Token", required = true, secure = true)
-    private String token;
-
-    @Expose
-    @SerializedName("VaultKey")
-    @Property(name = "VaultKey", required = true)
-    private String vaultKey;
+    @SerializedName("VaultPath")
+    @Property(name = "VaultPath", required = true)
+    private String vaultPath;
 
     @Expose
     @SerializedName("ConnectionTimeout")
@@ -49,30 +61,46 @@ public class SecretConfig {
     private Integer readTimeout = 30;
 
     @Expose
+    @SerializedName("AuthMethod")
+    @Property(name = "AuthMethod", required = true)
+    private String authMethod;
+
+    @Expose
+    @SerializedName("Token")
+    @Property(name = "Token", secure = true)
+    private String token;
+
+    @Expose
+    @SerializedName("RoleId")
+    @Property(name = "RoleId")
+    private String roleId;
+
+    @Expose
+    @SerializedName("SecretId")
+    @Property(name = "SecretId", secure = true)
+    private String secretId;
+
+    @Expose
     @SerializedName("ClientKeyPem")
-    @Property(name = "ClientKeyPem")
+    @Property(name = "ClientKeyPem", secure = true)
     private String clientKeyPem;
 
     @Expose
     @SerializedName("ClientPem")
-    @Property(name = "ClientPem")
+    @Property(name = "ClientPem", secure = true)
     private String clientPem;
 
     @Expose
     @SerializedName("ServerPem")
-    @Property(name = "ServerPem")
+    @Property(name = "ServerPem", secure = true)
     private String serverPem;
 
     public String getVaultUrl() {
         return vaultUrl;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public String getVaultKey() {
-        return vaultKey;
+    public String getVaultPath() {
+        return vaultPath;
     }
 
     public Integer getConnectionTimeout() {
@@ -81,6 +109,22 @@ public class SecretConfig {
 
     public Integer getReadTimeout() {
         return readTimeout;
+    }
+
+    public String getAuthMethod() {
+        return authMethod;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public String getSecretId() {
+        return secretId;
     }
 
     public String getClientKeyPem() {
@@ -95,16 +139,28 @@ public class SecretConfig {
         return serverPem;
     }
 
+    public boolean isAuthMethodSupported() {
+        return SUPPORTED_AUTH_METHODS.contains(authMethod.toLowerCase());
+    }
+
+    public static SecretConfig fromJSON(Map<String, String>     request) {
+        String json = GsonTransformer.toJson(request);
+        return GSON.fromJson(json, SecretConfig.class);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SecretConfig)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         SecretConfig that = (SecretConfig) o;
         return Objects.equals(vaultUrl, that.vaultUrl) &&
-                Objects.equals(token, that.token) &&
-                Objects.equals(vaultKey, that.vaultKey) &&
+                Objects.equals(vaultPath, that.vaultPath) &&
                 Objects.equals(connectionTimeout, that.connectionTimeout) &&
                 Objects.equals(readTimeout, that.readTimeout) &&
+                Objects.equals(authMethod, that.authMethod) &&
+                Objects.equals(token, that.token) &&
+                Objects.equals(roleId, that.roleId) &&
+                Objects.equals(secretId, that.secretId) &&
                 Objects.equals(clientKeyPem, that.clientKeyPem) &&
                 Objects.equals(clientPem, that.clientPem) &&
                 Objects.equals(serverPem, that.serverPem);
@@ -112,6 +168,18 @@ public class SecretConfig {
 
     @Override
     public int hashCode() {
-        return Objects.hash(vaultUrl, token, vaultKey, connectionTimeout, readTimeout, clientKeyPem, clientPem, serverPem);
+        return Objects.hash(vaultUrl, vaultPath, connectionTimeout, readTimeout, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem);
+    }
+
+    public boolean isTokenAuthentication() {
+        return TOKEN_AUTH_METHOD.equalsIgnoreCase(authMethod);
+    }
+
+    public boolean isAppRoleAuthentication() {
+        return APPROLE_AUTH_METHOD.equalsIgnoreCase(authMethod);
+    }
+
+    public boolean isCertAuthentication() {
+        return CERT_AUTH_METHOD.equalsIgnoreCase(authMethod);
     }
 }

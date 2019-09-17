@@ -16,8 +16,9 @@
 
 package com.thoughtworks.gocd.secretmanager.vault;
 
+import cd.go.plugin.base.executors.secrets.LookupExecutor;
 import com.bettercloud.vault.Vault;
-import com.github.bdpiparva.plugin.base.executors.secrets.LookupExecutor;
+
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.thoughtworks.gocd.secretmanager.vault.models.Secrets;
@@ -25,29 +26,29 @@ import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
 
 import java.util.Map;
 
-import static com.github.bdpiparva.plugin.base.GsonTransformer.fromJson;
-import static com.github.bdpiparva.plugin.base.GsonTransformer.toJson;
+import static cd.go.plugin.base.GsonTransformer.fromJson;
+import static cd.go.plugin.base.GsonTransformer.toJson;
 import static java.util.Collections.singletonMap;
 
 class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
-    private final ClientFactory clientFactory;
+    private final VaultProvider vaultProvider;
 
     public SecretConfigLookupExecutor() {
-        this(ClientFactory.instance());
+        this(new VaultProvider());
     }
 
-    SecretConfigLookupExecutor(ClientFactory clientFactory) {
-        this.clientFactory = clientFactory;
+    SecretConfigLookupExecutor(VaultProvider vaultProvider) {
+        this.vaultProvider = vaultProvider;
     }
 
     @Override
     protected GoPluginApiResponse execute(SecretConfigRequest request) {
         try {
             final Secrets secrets = new Secrets();
-            final Vault vault = clientFactory.create(request.getConfiguration());
+            final Vault vault = vaultProvider.vaultFor(request.getConfiguration());
 
             final Map<String, String> secretsFromVault = vault.logical()
-                    .read(request.getConfiguration().getVaultKey())
+                    .read(request.getConfiguration().getVaultPath())
                     .getData();
 
             for (String key : request.getKeys()) {
