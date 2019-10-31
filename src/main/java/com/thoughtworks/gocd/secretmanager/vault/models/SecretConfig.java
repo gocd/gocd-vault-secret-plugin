@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class SecretConfig {
     private static final Gson GSON = new GsonBuilder().
@@ -39,6 +40,8 @@ public class SecretConfig {
     public static final String CERT_AUTH_METHOD = "cert";
 
     public static final List<String> SUPPORTED_AUTH_METHODS = asList(TOKEN_AUTH_METHOD, APPROLE_AUTH_METHOD, CERT_AUTH_METHOD);
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 5;
+    public static final int DEFAULT_READ_TIMEOUT = 30;
 
     @Expose
     @SerializedName("VaultUrl")
@@ -53,12 +56,12 @@ public class SecretConfig {
     @Expose
     @SerializedName("ConnectionTimeout")
     @Property(name = "ConnectionTimeout")
-    private Integer connectionTimeout = 5;
+    private String connectionTimeout;
 
     @Expose
     @SerializedName("ReadTimeout")
     @Property(name = "ReadTimeout")
-    private Integer readTimeout = 30;
+    private String readTimeout;
 
     @Expose
     @SerializedName("AuthMethod")
@@ -104,11 +107,17 @@ public class SecretConfig {
     }
 
     public Integer getConnectionTimeout() {
-        return connectionTimeout;
+        if (isBlank(connectionTimeout)) {
+            return DEFAULT_CONNECTION_TIMEOUT;
+        }
+        return Integer.valueOf(connectionTimeout);
     }
 
     public Integer getReadTimeout() {
-        return readTimeout;
+        if (isBlank(readTimeout)) {
+            return DEFAULT_READ_TIMEOUT;
+        }
+        return Integer.valueOf(readTimeout);
     }
 
     public String getAuthMethod() {
@@ -143,7 +152,7 @@ public class SecretConfig {
         return SUPPORTED_AUTH_METHODS.contains(authMethod.toLowerCase());
     }
 
-    public static SecretConfig fromJSON(Map<String, String>     request) {
+    public static SecretConfig fromJSON(Map<String, String> request) {
         String json = GsonTransformer.toJson(request);
         return GSON.fromJson(json, SecretConfig.class);
     }
