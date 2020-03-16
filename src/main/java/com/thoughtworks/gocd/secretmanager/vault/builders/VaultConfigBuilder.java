@@ -26,12 +26,14 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class VaultConfigBuilder {
     public VaultConfig configFrom(SecretConfig secretConfig) throws VaultException {
-        return new VaultConfig()
+        VaultConfig request = new VaultConfig()
                 .address(secretConfig.getVaultUrl())
                 .openTimeout(secretConfig.getConnectionTimeout())
                 .readTimeout(secretConfig.getReadTimeout())
-                .sslConfig(sslConfig(secretConfig).build())
-                .build();
+                .sslConfig(sslConfig(secretConfig).build());
+        if (isNotBlank(secretConfig.getNameSpace()))
+            request = request.nameSpace(secretConfig.getNameSpace());
+        return request.build();
     }
 
     protected SslConfig sslConfig(SecretConfig secretConfig) {

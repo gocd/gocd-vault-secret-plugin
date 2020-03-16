@@ -54,6 +54,11 @@ public class SecretConfig {
     private String vaultPath;
 
     @Expose
+    @SerializedName("NameSpace")
+    @Property(name = "NameSpace")
+    private String nameSpace;
+
+    @Expose
     @SerializedName("ConnectionTimeout")
     @Property(name = "ConnectionTimeout")
     private String connectionTimeout;
@@ -104,6 +109,10 @@ public class SecretConfig {
 
     public String getVaultPath() {
         return vaultPath;
+    }
+
+    public String getNameSpace() {
+        return nameSpace;
     }
 
     public Integer getConnectionTimeout() {
@@ -164,6 +173,7 @@ public class SecretConfig {
         SecretConfig that = (SecretConfig) o;
         return Objects.equals(vaultUrl, that.vaultUrl) &&
                 Objects.equals(vaultPath, that.vaultPath) &&
+                Objects.equals(nameSpace, that.nameSpace) &&
                 Objects.equals(connectionTimeout, that.connectionTimeout) &&
                 Objects.equals(readTimeout, that.readTimeout) &&
                 Objects.equals(authMethod, that.authMethod) &&
@@ -177,7 +187,7 @@ public class SecretConfig {
 
     @Override
     public int hashCode() {
-        return Objects.hash(vaultUrl, vaultPath, connectionTimeout, readTimeout, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem);
+        return Objects.hash(vaultUrl, vaultPath, nameSpace, connectionTimeout, readTimeout, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem);
     }
 
     public boolean isTokenAuthentication() {
