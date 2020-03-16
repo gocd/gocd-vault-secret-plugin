@@ -32,7 +32,7 @@ public class AppRoleVaultConfigBuilderTest {
     class configFrom {
         @Test
         void shouldBuildVaultConfigFromProvidedSecretConfig() throws VaultException {
-            SecretConfig secretConfig = secretConfigWith("https://foo.bar", "10", "10", "cert", "");
+            SecretConfig secretConfig = secretConfigWith("https://foo.bar", "10", "10", "cert", "", null);
 
             VaultConfig vaultConfig = new AppRoleVaultConfigBuilder().configFrom(secretConfig);
 
@@ -40,10 +40,21 @@ public class AppRoleVaultConfigBuilderTest {
             assertThat(vaultConfig.getReadTimeout()).isEqualTo(secretConfig.getReadTimeout());
             assertThat(vaultConfig.getOpenTimeout()).isEqualTo(secretConfig.getConnectionTimeout());
             assertThat(vaultConfig.getSslConfig().isVerify()).isTrue();
+            assertThat(vaultConfig.getNameSpace()).isNullOrEmpty();
+        }
+
+        @Test
+        void shouldUseNamespaceIfConfigured() throws VaultException {
+            SecretConfig secretConfig = secretConfigWith("https://foo.bar", "10", "10", "cert", "", "test");
+
+            VaultConfig vaultConfig = new AppRoleVaultConfigBuilder().configFrom(secretConfig);
+
+            assertThat(vaultConfig.getNameSpace()).isEqualTo(secretConfig.getNameSpace());
         }
     }
 
-    private SecretConfig secretConfigWith(String vaultUrl, String connectionTimeout, String readTimeout, String authMethod, String serverPem) {
+    private SecretConfig secretConfigWith(String vaultUrl, String connectionTimeout, String readTimeout, String authMethod,
+                                          String serverPem, String namespace) {
         Map<String, String> secretConfigMap = new HashMap<>();
 
         secretConfigMap.put("VaultUrl", vaultUrl);
@@ -51,6 +62,7 @@ public class AppRoleVaultConfigBuilderTest {
         secretConfigMap.put("ReadTimeout", readTimeout);
         secretConfigMap.put("AuthMethod", authMethod);
         secretConfigMap.put("ServerPem", serverPem);
+        secretConfigMap.put("NameSpace", namespace);
 
         return SecretConfig.fromJSON(secretConfigMap);
     }

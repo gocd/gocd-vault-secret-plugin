@@ -33,7 +33,7 @@ class TokenVaultConfigBuilderTest {
     class configFrom {
         @Test
         void shouldBuildVaultConfigFromProvidedSecretConfig() throws VaultException {
-            SecretConfig secretConfig = secretConfigWith("https://foo.bar", "10", "10", "token", "");
+            SecretConfig secretConfig = secretConfigWith("https://foo.bar", "10", "10", "token", "", null);
 
             VaultConfig vaultConfig = new TokenVaultConfigBuilder().configFrom(secretConfig);
 
@@ -41,10 +41,21 @@ class TokenVaultConfigBuilderTest {
             assertThat(vaultConfig.getReadTimeout()).isEqualTo(secretConfig.getReadTimeout());
             assertThat(vaultConfig.getOpenTimeout()).isEqualTo(secretConfig.getConnectionTimeout());
             assertThat(vaultConfig.getSslConfig().isVerify()).isTrue();
+            assertThat(vaultConfig.getNameSpace()).isNullOrEmpty();
+        }
+
+        @Test
+        void shouldUseNamespaceIfConfigured() throws VaultException {
+            SecretConfig secretConfig = secretConfigWith("https://foo.bar", "10", "10", "cert", "", "test");
+
+            VaultConfig vaultConfig = new TokenVaultConfigBuilder().configFrom(secretConfig);
+
+            assertThat(vaultConfig.getNameSpace()).isEqualTo(secretConfig.getNameSpace());
         }
     }
 
-    private SecretConfig secretConfigWith(String vaultUrl, String connectionTimeout, String readTimeout, String authMethod, String serverPem) {
+    private SecretConfig secretConfigWith(String vaultUrl, String connectionTimeout, String readTimeout,
+                                          String authMethod, String serverPem, String namespace) {
         Map<String, String> secretConfigMap = new HashMap<>();
 
         secretConfigMap.put("VaultUrl", vaultUrl);
@@ -52,6 +63,7 @@ class TokenVaultConfigBuilderTest {
         secretConfigMap.put("ReadTimeout", readTimeout);
         secretConfigMap.put("AuthMethod", authMethod);
         secretConfigMap.put("ServerPem", serverPem);
+        secretConfigMap.put("Namespace", namespace);
 
         return SecretConfig.fromJSON(secretConfigMap);
     }
