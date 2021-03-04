@@ -60,7 +60,7 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
             return DefaultGoPluginApiResponse.success(toJson(secrets));
         } catch (Exception e) {
             LOGGER.error("Failed to lookup secret from vault.", e);
-            return DefaultGoPluginApiResponse.error(toJson(singletonMap("message", "Failed to lookup secrets form vault. See logs for more information.")));
+            return DefaultGoPluginApiResponse.error(toJson(singletonMap("message", "Failed to lookup secrets from vault. See logs for more information.")));
         }
     }
 
