@@ -42,6 +42,8 @@ public class SecretConfig {
     public static final List<String> SUPPORTED_AUTH_METHODS = asList(TOKEN_AUTH_METHOD, APPROLE_AUTH_METHOD, CERT_AUTH_METHOD);
     public static final int DEFAULT_CONNECTION_TIMEOUT = 5;
     public static final int DEFAULT_READ_TIMEOUT = 30;
+    public static final int DEFAULT_MAX_RETRIES = 0;
+    public static final int DEFAULT_RETRY_INTERVAL_MS = 100;
 
     @Expose
     @SerializedName("VaultUrl")
@@ -67,6 +69,16 @@ public class SecretConfig {
     @SerializedName("ReadTimeout")
     @Property(name = "ReadTimeout")
     private String readTimeout;
+
+    @Expose
+    @SerializedName("MaxRetries")
+    @Property(name = "MaxRetries")
+    private String maxRetries;
+
+    @Expose
+    @SerializedName("RetryIntervalMilliseconds")
+    @Property(name = "RetryIntervalMilliseconds")
+    private String retryIntervalMilliseconds;
 
     @Expose
     @SerializedName("AuthMethod")
@@ -129,6 +141,20 @@ public class SecretConfig {
         return Integer.valueOf(readTimeout);
     }
 
+    public Integer getMaxRetries() {
+        if (isBlank(maxRetries)) {
+            return DEFAULT_MAX_RETRIES;
+        }
+        return Integer.valueOf(maxRetries);
+    }
+
+    public Integer getRetryIntervalMilliseconds() {
+        if (isBlank(retryIntervalMilliseconds)) {
+            return DEFAULT_RETRY_INTERVAL_MS;
+        }
+        return Integer.valueOf(retryIntervalMilliseconds);
+    }
+
     public String getAuthMethod() {
         return authMethod;
     }
@@ -176,6 +202,8 @@ public class SecretConfig {
                 Objects.equals(nameSpace, that.nameSpace) &&
                 Objects.equals(connectionTimeout, that.connectionTimeout) &&
                 Objects.equals(readTimeout, that.readTimeout) &&
+                Objects.equals(maxRetries, that.maxRetries) &&
+                Objects.equals(retryIntervalMilliseconds, that.retryIntervalMilliseconds) &&
                 Objects.equals(authMethod, that.authMethod) &&
                 Objects.equals(token, that.token) &&
                 Objects.equals(roleId, that.roleId) &&
@@ -187,7 +215,7 @@ public class SecretConfig {
 
     @Override
     public int hashCode() {
-        return Objects.hash(vaultUrl, vaultPath, nameSpace, connectionTimeout, readTimeout, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem);
+        return Objects.hash(vaultUrl, vaultPath, nameSpace, connectionTimeout, readTimeout, maxRetries, retryIntervalMilliseconds, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem);
     }
 
     public boolean isTokenAuthentication() {

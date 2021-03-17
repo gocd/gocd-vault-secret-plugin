@@ -29,6 +29,8 @@ class SecretConfigTest {
         SecretConfig secretConfig = SecretConfig.fromJSON(request);
         assertThat(secretConfig.getConnectionTimeout()).isEqualTo(5);
         assertThat(secretConfig.getReadTimeout()).isEqualTo(30);
+        assertThat(secretConfig.getMaxRetries()).isEqualTo(0);
+        assertThat(secretConfig.getRetryIntervalMilliseconds()).isEqualTo(100);
     }
 
     @Test
@@ -36,8 +38,12 @@ class SecretConfigTest {
         HashMap<String, String> request = new HashMap<>();
         request.put("ConnectionTimeout", "9");
         request.put("ReadTimeout", "50");
+        request.put("MaxRetries", "5");
+        request.put("RetryIntervalMilliseconds", "200");
         SecretConfig secretConfig = SecretConfig.fromJSON(request);
         assertThat(secretConfig.getConnectionTimeout()).isEqualTo(9);
         assertThat(secretConfig.getReadTimeout()).isEqualTo(50);
+        assertThat(secretConfig.getMaxRetries()).isEqualTo(5);
+        assertThat(secretConfig.getRetryIntervalMilliseconds()).isEqualTo(200);
     }
 }

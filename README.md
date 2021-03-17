@@ -86,6 +86,8 @@ Alternatively, the configuration can be added directly to the config.xml using t
 | SecretId          | No       |  Required if using `approle` auth method. |
 | ClientKeyPem      | No       |  Required if using `cert` auth method. An RSA private key, in unencrypted PEM format with UTF-8 encoding. |
 | ClientPem         | No       |  Required if using `cert` auth method. An X.509 client certificate, in unencrypted PEM format with UTF-8 encoding. |
+| Max Retries       | No       | Number of times to attempt to gather secrets from Vault. Defaults to `0`. |
+| Retry Interval Milliseconds | No       | Duration between retry attempts (set by `Max Retries`). Defaults to `100 milliseconds`. |
 
 
 ### Building the code base
