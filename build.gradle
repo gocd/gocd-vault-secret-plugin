@@ -70,7 +70,7 @@ dependencies {
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.2'
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.2'
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.7.2'
-  testCompile group: 'org.assertj', name: 'assertj-core', version: '3.18.1'
+  testCompile group: 'org.assertj', name: 'assertj-core', version: '3.19.0'
   testCompile group: 'org.mockito', name: 'mockito-core', version: '3.7.7'
   testCompile group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
   testCompile group: 'cd.go.plugin', name: 'go-plugin-api', version: '21.2.0'
