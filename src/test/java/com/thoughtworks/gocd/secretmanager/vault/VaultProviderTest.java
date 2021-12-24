@@ -29,11 +29,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
+@MockitoSettings
 class VaultProviderTest {
     @Mock
     VaultConfigBuilderFactory vaultConfigBuilderFactory;
@@ -45,7 +46,6 @@ class VaultProviderTest {
 
     @BeforeEach
     void setUp() {
-        initMocks(this);
         vaultProvider = new VaultProvider(vaultConfigBuilderFactory, vaultAuthenticatorFactory);
     }
 

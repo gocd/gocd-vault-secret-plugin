@@ -26,7 +26,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class TokenAuthenticatorTest {
     @Nested
@@ -42,7 +42,7 @@ class TokenAuthenticatorTest {
             String token = new TokenAuthenticator().authenticate(vault, secretConfig);
 
             assertThat(token).isEqualTo(secretConfig.getToken());
-            verifyZeroInteractions(vault);
+            verifyNoInteractions(vault);
         }
     }
 }
