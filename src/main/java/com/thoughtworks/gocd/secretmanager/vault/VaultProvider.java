@@ -44,7 +44,8 @@ public class VaultProvider {
         VaultConfig vaultConfig = configBuilder.configFrom(secretConfig);
 
         VaultAuthenticator vaultAuthenticator = vaultAuthenticatorFactory.authenticatorFor(secretConfig);
-        Vault vault = new Vault(vaultConfig);
+        Vault vault = new Vault(vaultConfig)
+                .withRetries(secretConfig.getMaxRetries(), secretConfig.getRetryIntervalMilliseconds());
 
         String token = vaultAuthenticator.authenticate(vault, secretConfig);
 
