@@ -73,21 +73,21 @@ Alternatively, the configuration can be added directly to the config.xml using t
 `<rules>` tag defines where this secretConfig is allowed/denied to be referred. For more details about rules and examples refer the GoCD Secret Management [documentation](https://docs.gocd.org/current/configuration/secrets_management.html)
 
 
-| Field             | Required | Description                                                     |
-| ----------------- |----------| --------------------------------------------------------------- |
-| VaultUrl          | Yes      |  The url of the Vault server instance. If no address is explicitly set, the plugin will look to the `VAULT_ADDR` environment variable. |
-| VaultPath         | Yes      |  The vault path which holds the secrets as key-value pair (e.g. `secret/gocd`) |
-| ConnectionTimeout | No       |  The number of seconds to wait before giving up on establishing an HTTP(s) connection to the Vault server. If no openTimeout is explicitly set, then the object will look to the `VAULT_OPEN_TIMEOUT` environment variable. Defaults to `5 seconds`. | 
-| ReadTimeout       | No       |  Once connection has already been established, this is the number of seconds to wait for all data to finish downloading. If no readTimeout is explicitly set, then the object will look to the `VAULT_READ_TIMEOUT` environment variable. Defaults to `30 seconds`. |
-| ServerPem         | No       |  An X.509 certificate, in unencrypted PEM format with UTF-8 encoding to use when communicating with Vault over HTTPS |
-| AuthMethod        | Yes      |  The auth method to use to authenticate with the Vault server, can be one of `token`, `approle` or `cert` |
-| Token             | No       |  Required if using `token` auth method. This is the token used to read secrets from Vault. Ensure this token has a longer ttl, the plugin will not be renewing the token. |
-| RoleId            | No       |  Required if using `approle` auth method. The plugins will use the configured `RoleId` and `SecretId` to authenticate with Vault. |
-| SecretId          | No       |  Required if using `approle` auth method. |
-| ClientKeyPem      | No       |  Required if using `cert` auth method. An RSA private key, in unencrypted PEM format with UTF-8 encoding. |
-| ClientPem         | No       |  Required if using `cert` auth method. An X.509 client certificate, in unencrypted PEM format with UTF-8 encoding. |
-| Max Retries       | No       | Number of times to attempt to gather secrets from Vault. Defaults to `0`. |
-| Retry Interval Milliseconds | No       | Duration between retry attempts (set by `Max Retries`). Defaults to `100 milliseconds`. |
+| Field                       | Required | Description                                                                                                                                                                                                                                                        |
+|-----------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| VaultUrl                    | Yes      | The url of the Vault server instance. If no address is explicitly set, the plugin will look to the `VAULT_ADDR` environment variable.                                                                                                                              |
+| VaultPath                   | Yes      | The vault path which holds the secrets as key-value pair (e.g. `secret/gocd`)                                                                                                                                                                                      |
+| ConnectionTimeout           | No       | The number of seconds to wait before giving up on establishing an HTTP(s) connection to the Vault server. If no openTimeout is explicitly set, then the object will look to the `VAULT_OPEN_TIMEOUT` environment variable. Defaults to `5 seconds`.                |
+| ReadTimeout                 | No       | Once connection has already been established, this is the number of seconds to wait for all data to finish downloading. If no readTimeout is explicitly set, then the object will look to the `VAULT_READ_TIMEOUT` environment variable. Defaults to `30 seconds`. |
+| ServerPem                   | No       | An X.509 certificate, in unencrypted PEM format with UTF-8 encoding to use when communicating with Vault over HTTPS                                                                                                                                                |
+| AuthMethod                  | Yes      | The auth method to use to authenticate with the Vault server, can be one of `token`, `approle` or `cert`                                                                                                                                                           |
+| Token                       | No       | Required if using `token` auth method. This is the token used to read secrets from Vault. Ensure this token has a longer ttl, the plugin will not be renewing the token.                                                                                           |
+| RoleId                      | No       | Required if using `approle` auth method. The plugins will use the configured `RoleId` and `SecretId` to authenticate with Vault.                                                                                                                                   |
+| SecretId                    | No       | Required if using `approle` auth method.                                                                                                                                                                                                                           |
+| ClientKeyPem                | No       | Required if using `cert` auth method. An RSA private key, in unencrypted PEM format with UTF-8 encoding.                                                                                                                                                           |
+| ClientPem                   | No       | Required if using `cert` auth method. An X.509 client certificate, in unencrypted PEM format with UTF-8 encoding.                                                                                                                                                  |
+| Max Retries                 | No       | Number of times to attempt to gather secrets from Vault. Defaults to `0`.                                                                                                                                                                                          |
+| Retry Interval Milliseconds | No       | Duration between retry attempts (set by `Max Retries`). Defaults to `100 milliseconds`.                                                                                                                                                                            |
 
 
 ### Building the code base
