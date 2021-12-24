@@ -57,7 +57,7 @@ class VaultPluginTest {
 
     @ParameterizedTest
     @JsonSource(jsonFiles = "/secret-config-metadata.json")
-    void shouldReturnConfigMetadata(String expectedJson) throws UnhandledRequestTypeException, JSONException {
+    void shouldReturnConfigMetadata(String expectedJson) throws JSONException {
         final DefaultGoPluginApiRequest request = request("go.cd.secrets.secrets-config.get-metadata");
 
         final GoPluginApiResponse response = vaultPlugin.handle(request);
@@ -67,7 +67,7 @@ class VaultPluginTest {
     }
 
     @Test
-    void shouldReturnIcon() throws UnhandledRequestTypeException {
+    void shouldReturnIcon() {
         final DefaultGoPluginApiRequest request = request("go.cd.secrets.get-icon");
 
         final GoPluginApiResponse response = vaultPlugin.handle(request);
@@ -81,7 +81,7 @@ class VaultPluginTest {
     }
 
     @Test
-    void shouldReturnSecretConfigView() throws UnhandledRequestTypeException {
+    void shouldReturnSecretConfigView() {
         final DefaultGoPluginApiRequest request = request("go.cd.secrets.secrets-config.get-view");
 
         final GoPluginApiResponse response = vaultPlugin.handle(request);
@@ -107,7 +107,7 @@ class VaultPluginTest {
                 "/secret-config-with-unknown-fields.json",
                 "/unknown-fields-error.json"
         })
-        void shouldFailIfHasUnknownFields(String requestBody, String expected) throws UnhandledRequestTypeException, JSONException {
+        void shouldFailIfHasUnknownFields(String requestBody, String expected) throws JSONException {
             final DefaultGoPluginApiRequest request = request(requestName);
             request.setRequestBody(requestBody);
 
@@ -122,7 +122,7 @@ class VaultPluginTest {
                 "/secret-config-with-missing-required-fields.json",
                 "/missing-fields-error.json"
         })
-        void shouldFailIfRequiredFieldsAreMissingInRequestBody(String requestBody, String expected) throws UnhandledRequestTypeException, JSONException {
+        void shouldFailIfRequiredFieldsAreMissingInRequestBody(String requestBody, String expected) throws JSONException {
             final DefaultGoPluginApiRequest request = request(requestName);
             request.setRequestBody(requestBody);
 
@@ -134,7 +134,7 @@ class VaultPluginTest {
 
         @ParameterizedTest
         @JsonSource(jsonFiles = "/secret-config.json")
-        void shouldPassIfRequestIsValid(String requestBody) throws JSONException, UnhandledRequestTypeException {
+        void shouldPassIfRequestIsValid(String requestBody) throws JSONException {
             final DefaultGoPluginApiRequest request = request(requestName);
             request.setRequestBody(requestBody);
 

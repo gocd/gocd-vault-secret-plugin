@@ -55,8 +55,12 @@ public class VaultPlugin implements GoPlugin {
     }
 
     @Override
-    public GoPluginApiResponse handle(GoPluginApiRequest request) throws UnhandledRequestTypeException {
-        return requestDispatcher.dispatch(request);
+    public GoPluginApiResponse handle(GoPluginApiRequest request) {
+        try {
+            return requestDispatcher.dispatch(request);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
