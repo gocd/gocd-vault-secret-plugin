@@ -19,7 +19,7 @@ apply plugin: 'java'
 
 gocdPlugin {
   id = 'com.thoughtworks.gocd.secretmanager.vault'
-  pluginVersion = '1.2.0'
+  pluginVersion = '1.2.1-SNAPSHOT'
   goCdVersion = '20.9.0'
   name = 'Vault secret manager plugin'
   description = 'The plugin allows to use hashicorp vault as secret manager for the GoCD server'

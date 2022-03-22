@@ -38,17 +38,26 @@ public class SecretConfig {
     public static final String TOKEN_AUTH_METHOD = "token";
     public static final String APPROLE_AUTH_METHOD = "approle";
     public static final String CERT_AUTH_METHOD = "cert";
+    public static final String SECRET_ENGINE = "secret";
+    public static final String OIDC_ENGINE = "oidc";
 
     public static final List<String> SUPPORTED_AUTH_METHODS = asList(TOKEN_AUTH_METHOD, APPROLE_AUTH_METHOD, CERT_AUTH_METHOD);
+    public static final List<String> SUPPORTED_SECRET_ENGINES = asList(SECRET_ENGINE, OIDC_ENGINE);
     public static final int DEFAULT_CONNECTION_TIMEOUT = 5;
     public static final int DEFAULT_READ_TIMEOUT = 30;
     public static final int DEFAULT_MAX_RETRIES = 0;
     public static final int DEFAULT_RETRY_INTERVAL_MS = 100;
+    public static final String DEFAULT_SECRET_ENGINE = SECRET_ENGINE;
 
     @Expose
     @SerializedName("VaultUrl")
     @Property(name = "VaultUrl", required = true)
     private String vaultUrl;
+
+    @Expose
+    @SerializedName("SecretEngine")
+    @Property(name = "SecretEngine")
+    private String secretEngine;
 
     @Expose
     @SerializedName("VaultPath")
@@ -183,8 +192,19 @@ public class SecretConfig {
         return serverPem;
     }
 
+    public String getSecretEngine() {
+        if (isBlank(secretEngine)) {
+            return DEFAULT_SECRET_ENGINE;
+        }
+        return secretEngine;
+    }
+
     public boolean isAuthMethodSupported() {
         return SUPPORTED_AUTH_METHODS.contains(authMethod.toLowerCase());
+    }
+
+    public boolean isSecretEngineSupported() {
+        return SUPPORTED_SECRET_ENGINES.contains(getSecretEngine().toLowerCase());
     }
 
     public static SecretConfig fromJSON(Map<String, String> request) {
@@ -210,12 +230,13 @@ public class SecretConfig {
                 Objects.equals(secretId, that.secretId) &&
                 Objects.equals(clientKeyPem, that.clientKeyPem) &&
                 Objects.equals(clientPem, that.clientPem) &&
-                Objects.equals(serverPem, that.serverPem);
+                Objects.equals(serverPem, that.serverPem) &&
+                Objects.equals(secretEngine, that.secretEngine);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(vaultUrl, vaultPath, nameSpace, connectionTimeout, readTimeout, maxRetries, retryIntervalMilliseconds, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem);
+        return Objects.hash(vaultUrl, vaultPath, nameSpace, connectionTimeout, readTimeout, maxRetries, retryIntervalMilliseconds, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem, secretEngine);
     }
 
     public boolean isTokenAuthentication() {

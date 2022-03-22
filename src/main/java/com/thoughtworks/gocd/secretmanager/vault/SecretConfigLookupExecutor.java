@@ -24,8 +24,8 @@ import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.thoughtworks.gocd.secretmanager.vault.models.Secrets;
 import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
-
-import java.util.Map;
+import com.thoughtworks.gocd.secretmanager.vault.secretengines.SecretEngine;
+import com.thoughtworks.gocd.secretmanager.vault.builders.SecretEngineBuilder;
 
 import static cd.go.plugin.base.GsonTransformer.fromJson;
 import static cd.go.plugin.base.GsonTransformer.toJson;
@@ -46,17 +46,14 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
     @Override
     protected GoPluginApiResponse execute(SecretConfigRequest request) {
         try {
-            final Secrets secrets = new Secrets();
             final Vault vault = vaultProvider.vaultFor(request.getConfiguration());
+            final Secrets secrets = new Secrets();
+            final String vaultPath = request.getConfiguration().getVaultPath();
 
-            final Map<String, String> secretsFromVault = vault.logical()
-                    .read(request.getConfiguration().getVaultPath())
-                    .getData();
+            SecretEngine secretEngine = buildSecretEngine(request, vault);
 
             for (String key : request.getKeys()) {
-                if (secretsFromVault.containsKey(key)) {
-                    secrets.add(key, secretsFromVault.get(key));
-                }
+                secretEngine.getSecret(vaultPath, key).ifPresent(secret -> secrets.add(key, secret));
             }
 
             return DefaultGoPluginApiResponse.success(toJson(secrets));
@@ -64,6 +61,13 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
             LOGGER.error("Failed to lookup secret from vault.", e);
             return DefaultGoPluginApiResponse.error(toJson(singletonMap("message", "Failed to lookup secrets from vault. See logs for more information.")));
         }
+    }
+
+    protected SecretEngine buildSecretEngine(SecretConfigRequest request, Vault vault) {
+        return new SecretEngineBuilder()
+                .secretConfig(request.getConfiguration())
+                .vault(vault)
+                .build();
     }
 
     @Override
