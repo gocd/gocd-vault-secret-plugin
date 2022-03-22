@@ -17,9 +17,9 @@
 package com.thoughtworks.gocd.secretmanager.vault;
 
 import com.bettercloud.vault.Vault;
+import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Logical;
-import com.bettercloud.vault.response.LogicalResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
@@ -28,11 +28,9 @@ import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,9 +61,10 @@ class SecretConfigLookupExecutorTest {
         final SecretConfigRequest request = mock(SecretConfigRequest.class);
         final SecretConfig secretConfig = mock(SecretConfig.class);
         final KVSecretEngine kvSecretEngine = mock(KVSecretEngine.class);
+        final VaultConfig vaultConfig = mock(VaultConfig.class);
 
         when(request.getConfiguration()).thenReturn(secretConfig);
-        doReturn(kvSecretEngine).when(secretConfigLookupExecutor).buildSecretEngine(request, vault);
+        doReturn(kvSecretEngine).when(secretConfigLookupExecutor).buildSecretEngine(request, vault, vaultConfig, secretConfig);
 
         when(kvSecretEngine.getSecret(anyString(), eq("AWS_ACCESS_KEY"))).thenReturn(Optional.of("ASKDMDASDKLASDI"));
         when(kvSecretEngine.getSecret(anyString(), eq("AWS_SECRET_KEY"))).thenReturn(Optional.of("slfjskldfjsdjflfsdfsffdadsdfsdfsdfsd;"));

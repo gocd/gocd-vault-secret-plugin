@@ -29,7 +29,9 @@ public class VaultProvider {
     private final VaultConfigBuilderFactory vaultConfigBuilderFactory;
     private final VaultAuthenticatorFactory vaultAuthenticatorFactory;
 
-//  Used only in tests
+    private VaultConfig vaultConfig;
+
+    //  Used only in tests
     VaultProvider(VaultConfigBuilderFactory vaultConfigBuilderFactory, VaultAuthenticatorFactory vaultAuthenticatorFactory) {
         this.vaultConfigBuilderFactory = vaultConfigBuilderFactory;
         this.vaultAuthenticatorFactory = vaultAuthenticatorFactory;
@@ -40,17 +42,26 @@ public class VaultProvider {
     }
 
     public Vault vaultFor(SecretConfig secretConfig) throws VaultException {
-        VaultConfigBuilder configBuilder = vaultConfigBuilderFactory.builderFor(secretConfig);
-        VaultConfig vaultConfig = configBuilder.configFrom(secretConfig);
-
-        VaultAuthenticator vaultAuthenticator = vaultAuthenticatorFactory.authenticatorFor(secretConfig);
+        vaultConfig = vaultConfig(secretConfig);
         Vault vault = new Vault(vaultConfig)
                 .withRetries(secretConfig.getMaxRetries(), secretConfig.getRetryIntervalMilliseconds());
-
-        String token = vaultAuthenticator.authenticate(vault, secretConfig);
-
+        String token = authenticate(vault, secretConfig);
         vaultConfig.token(token);
-
         return vault;
+    }
+
+    private VaultConfig vaultConfig(SecretConfig secretConfig) throws VaultException {
+        VaultConfigBuilder configBuilder = vaultConfigBuilderFactory.builderFor(secretConfig);
+        VaultConfig vaultConfig = configBuilder.configFrom(secretConfig);
+        return vaultConfig;
+    }
+
+    private String authenticate(Vault vault, SecretConfig secretConfig) throws VaultException {
+        VaultAuthenticator vaultAuthenticator = vaultAuthenticatorFactory.authenticatorFor(secretConfig);
+        return vaultAuthenticator.authenticate(vault, secretConfig);
+    }
+
+    public VaultConfig getVaultConfig() {
+        return vaultConfig;
     }
 }

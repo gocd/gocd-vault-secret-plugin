@@ -17,6 +17,7 @@
 package com.thoughtworks.gocd.secretmanager.vault.builders;
 
 import com.bettercloud.vault.Vault;
+import com.bettercloud.vault.VaultConfig;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 import com.thoughtworks.gocd.secretmanager.vault.secretengines.KVSecretEngine;
 import com.thoughtworks.gocd.secretmanager.vault.secretengines.OIDCPipelineIdentityProvider;
@@ -25,11 +26,12 @@ import com.thoughtworks.gocd.secretmanager.vault.secretengines.SecretEngine;
 public class SecretEngineBuilder {
 
     private Vault vault;
-    private String secretEngineIdentifier;
+    private VaultConfig vaultConfig;
+    private SecretConfig secretConfig;
 
 
     public SecretEngineBuilder secretConfig(SecretConfig secretConfig) {
-        this.secretEngineIdentifier = secretConfig.getSecretEngine();
+        this.secretConfig = secretConfig;
         return this;
     }
 
@@ -39,14 +41,17 @@ public class SecretEngineBuilder {
     }
 
     public SecretEngine build() {
-        switch (secretEngineIdentifier) {
+        switch (secretConfig.getSecretEngine()) {
             case SecretConfig.OIDC_ENGINE:
-                return new OIDCPipelineIdentityProvider(vault);
+                return new OIDCPipelineIdentityProvider(vault, vaultConfig, secretConfig);
             case SecretConfig.SECRET_ENGINE:
             default:
                 return new KVSecretEngine(vault);
         }
     }
 
-
+    public SecretEngineBuilder vaultConfig(VaultConfig vaultConfig) {
+        this.vaultConfig = vaultConfig;
+        return this;
+    }
 }

@@ -19,9 +19,11 @@ package com.thoughtworks.gocd.secretmanager.vault;
 import cd.go.plugin.base.executors.secrets.LookupExecutor;
 import com.bettercloud.vault.Vault;
 
+import com.bettercloud.vault.VaultConfig;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 import com.thoughtworks.gocd.secretmanager.vault.models.Secrets;
 import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
 import com.thoughtworks.gocd.secretmanager.vault.secretengines.SecretEngine;
@@ -50,7 +52,7 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
             final Secrets secrets = new Secrets();
             final String vaultPath = request.getConfiguration().getVaultPath();
 
-            SecretEngine secretEngine = buildSecretEngine(request, vault);
+            SecretEngine secretEngine = buildSecretEngine(request, vault, vaultProvider.getVaultConfig(), request.getConfiguration());
 
             for (String key : request.getKeys()) {
                 secretEngine.getSecret(vaultPath, key).ifPresent(secret -> secrets.add(key, secret));
@@ -63,10 +65,11 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
         }
     }
 
-    protected SecretEngine buildSecretEngine(SecretConfigRequest request, Vault vault) {
+    protected SecretEngine buildSecretEngine(SecretConfigRequest request, Vault vault, VaultConfig vaultConfig, SecretConfig secretConfig) {
         return new SecretEngineBuilder()
                 .secretConfig(request.getConfiguration())
                 .vault(vault)
+                .vaultConfig(vaultConfig)
                 .build();
     }
 
