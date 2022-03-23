@@ -52,7 +52,7 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
             final Secrets secrets = new Secrets();
             final String vaultPath = request.getConfiguration().getVaultPath();
 
-            SecretEngine secretEngine = buildSecretEngine(request, vault, vaultProvider.getVaultConfig(), request.getConfiguration());
+            SecretEngine secretEngine = buildSecretEngine(request, vault, vaultProvider.getVaultConfig());
 
             for (String key : request.getKeys()) {
                 secretEngine.getSecret(vaultPath, key).ifPresent(secret -> secrets.add(key, secret));
@@ -65,7 +65,7 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
         }
     }
 
-    protected SecretEngine buildSecretEngine(SecretConfigRequest request, Vault vault, VaultConfig vaultConfig, SecretConfig secretConfig) {
+    protected SecretEngine buildSecretEngine(SecretConfigRequest request, Vault vault, VaultConfig vaultConfig) {
         return new SecretEngineBuilder()
                 .secretConfig(request.getConfiguration())
                 .vault(vault)

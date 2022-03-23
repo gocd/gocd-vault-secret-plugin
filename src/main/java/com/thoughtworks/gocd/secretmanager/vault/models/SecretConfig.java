@@ -23,9 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -58,6 +56,16 @@ public class SecretConfig {
     @SerializedName("SecretEngine")
     @Property(name = "SecretEngine")
     private String secretEngine;
+
+    @Expose
+    @SerializedName("PipelineTokenAuthBackendRole")
+    @Property(name = "PipelineTokenAuthBackendRole")
+    private String pipelineTokenAuthBackendRole;
+
+    @Expose
+    @SerializedName("PipelinePolicy")
+    @Property(name = "PipelinePolicy")
+    private String pipelinePolicy;
 
     @Expose
     @SerializedName("VaultPath")
@@ -199,6 +207,17 @@ public class SecretConfig {
         return secretEngine;
     }
 
+    public String getPipelineTokenAuthBackendRole() {
+        return pipelineTokenAuthBackendRole;
+    }
+
+    public List<String> getPipelinePolicy() {
+        if (isBlank(pipelinePolicy)) {
+            return new ArrayList<>();
+        }
+        return Arrays.asList(pipelinePolicy.split(",\\s*"));
+    }
+
     public boolean isAuthMethodSupported() {
         return SUPPORTED_AUTH_METHODS.contains(authMethod.toLowerCase());
     }
@@ -231,7 +250,9 @@ public class SecretConfig {
                 Objects.equals(clientKeyPem, that.clientKeyPem) &&
                 Objects.equals(clientPem, that.clientPem) &&
                 Objects.equals(serverPem, that.serverPem) &&
-                Objects.equals(secretEngine, that.secretEngine);
+                Objects.equals(secretEngine, that.secretEngine) &&
+                Objects.equals(pipelineTokenAuthBackendRole, that.pipelineTokenAuthBackendRole) &&
+                Objects.equals(pipelinePolicy, that.pipelinePolicy);
     }
 
     @Override
@@ -249,5 +270,9 @@ public class SecretConfig {
 
     public boolean isCertAuthentication() {
         return CERT_AUTH_METHOD.equalsIgnoreCase(authMethod);
+    }
+
+    public boolean isOIDCSecretEngine() {
+        return OIDC_ENGINE.equalsIgnoreCase(secretEngine);
     }
 }

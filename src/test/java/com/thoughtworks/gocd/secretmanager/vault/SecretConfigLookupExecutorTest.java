@@ -63,8 +63,9 @@ class SecretConfigLookupExecutorTest {
         final KVSecretEngine kvSecretEngine = mock(KVSecretEngine.class);
         final VaultConfig vaultConfig = mock(VaultConfig.class);
 
+        when(vaultProvider.getVaultConfig()).thenReturn(vaultConfig);
         when(request.getConfiguration()).thenReturn(secretConfig);
-        doReturn(kvSecretEngine).when(secretConfigLookupExecutor).buildSecretEngine(request, vault, vaultConfig, secretConfig);
+        doReturn(kvSecretEngine).when(secretConfigLookupExecutor).buildSecretEngine(request, vault, vaultConfig);
 
         when(kvSecretEngine.getSecret(anyString(), eq("AWS_ACCESS_KEY"))).thenReturn(Optional.of("ASKDMDASDKLASDI"));
         when(kvSecretEngine.getSecret(anyString(), eq("AWS_SECRET_KEY"))).thenReturn(Optional.of("slfjskldfjsdjflfsdfsffdadsdfsdfsdfsd;"));

@@ -19,16 +19,16 @@ package com.thoughtworks.gocd.secretmanager.vault.request;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class DataResponse<T> {
+public class AuthMountsResponse {
 
     @Expose
-    @SerializedName("data")
-    private T data;
+    @SerializedName("token/")
+    private TokenAuthMountResponse token;
 
-    public DataResponse() {
+    public AuthMountsResponse() {
     }
 
-    public T getData() {
-        return data;
+    public TokenAuthMountResponse getToken() {
+        return token;
     }
 }

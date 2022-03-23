@@ -19,16 +19,25 @@ package com.thoughtworks.gocd.secretmanager.vault.request;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class DataResponse<T> {
+import java.util.List;
+
+public class CreateTokenRequest {
 
     @Expose
-    @SerializedName("data")
-    private T data;
+    @SerializedName("role_name")
+    private String roleName;
 
-    public DataResponse() {
-    }
+    @Expose
+    @SerializedName("policies")
+    private List<String> policies;
 
-    public T getData() {
-        return data;
+    @Expose
+    @SerializedName("entity_alias")
+    private String entityAlias;
+
+    public CreateTokenRequest(String roleName, List<String> policies, String entityAlias) {
+        this.roleName = roleName;
+        this.policies = policies;
+        this.entityAlias = entityAlias;
     }
 }

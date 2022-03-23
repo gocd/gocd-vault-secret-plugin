@@ -46,7 +46,8 @@ public class VaultPlugin implements GoPlugin {
                 .configMetadata(SecretConfig.class)
                 .configView("/secrets.template.html")
                 .validateSecretConfig(new AuthMethodValidator(), new CertAuthMethodValidator(),
-                        new AppRoleAuthMethodValidator(), new TokenAuthMethodValidator(), new SecretEngineValidator())
+                        new AppRoleAuthMethodValidator(), new TokenAuthMethodValidator(),
+                        new SecretEngineValidator(), new OIDCSecretEngineValidator())
                 .lookup(new SecretConfigLookupExecutor())
                 .build();
     }
