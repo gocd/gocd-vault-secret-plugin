@@ -14,38 +14,30 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.request;
+package com.thoughtworks.gocd.secretmanager.vault.request.vault;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class OICDTokenResponse {
+import java.util.List;
 
-
-    @Expose
-    @SerializedName("client_id")
-    private String clientId;
+public class CreateTokenRequest {
 
     @Expose
-    @SerializedName("token")
-    private String token;
+    @SerializedName("role_name")
+    private String roleName;
 
     @Expose
-    @SerializedName("ttl")
-    private long ttl;
+    @SerializedName("policies")
+    private List<String> policies;
 
-    public OICDTokenResponse() {
-    }
+    @Expose
+    @SerializedName("entity_alias")
+    private String entityAlias;
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public long getTtl() {
-        return ttl;
+    public CreateTokenRequest(String roleName, List<String> policies, String entityAlias) {
+        this.roleName = roleName;
+        this.policies = policies;
+        this.entityAlias = entityAlias;
     }
 }

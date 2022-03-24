@@ -19,12 +19,14 @@ package com.thoughtworks.gocd.secretmanager.vault.secretengines;
 import cd.go.plugin.base.GsonTransformer;
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
 import com.google.gson.reflect.TypeToken;
+import com.thoughtworks.gocd.secretmanager.vault.gocd.GoCDPipelineApi;
 import com.thoughtworks.gocd.secretmanager.vault.http.DataResponseExtractor;
 import com.thoughtworks.gocd.secretmanager.vault.http.OkHTTPClientFactory;
+import com.thoughtworks.gocd.secretmanager.vault.http.exceptions.APIException;
+import com.thoughtworks.gocd.secretmanager.vault.models.PipelineMaterial;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
-import com.thoughtworks.gocd.secretmanager.vault.request.*;
+import com.thoughtworks.gocd.secretmanager.vault.request.vault.*;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -32,12 +34,13 @@ import java.lang.reflect.Type;
 import java.util.Optional;
 
 import static cd.go.plugin.base.GsonTransformer.toJson;
-import static com.thoughtworks.gocd.secretmanager.vault.http.OkHTTPClientFactory.JSON;
+import static com.thoughtworks.gocd.secretmanager.vault.http.OkHTTPClientFactory.CONTENT_TYPE_JSON;
 
 public class OIDCPipelineIdentityProvider extends SecretEngine {
 
     private final OkHttpClient client;
     private final DataResponseExtractor dataResponseExtractor;
+    private final GoCDPipelineApi gocdPipelineApi;
     private VaultConfig vaultConfig;
     private SecretConfig secretConfig;
 
@@ -47,21 +50,17 @@ public class OIDCPipelineIdentityProvider extends SecretEngine {
         super(vault);
         this.vaultConfig = vaultConfig;
         this.secretConfig = secretConfig;
+        this.gocdPipelineApi = new GoCDPipelineApi(secretConfig);
         this.dataResponseExtractor = new DataResponseExtractor();
 
         OkHTTPClientFactory okHTTPClientFactory = new OkHTTPClientFactory();
-        this.client = okHTTPClientFactory.buildFor(secretConfig);
+        this.client = okHTTPClientFactory.vault(secretConfig);
     }
 
     @Override
-    public Optional<String> getSecret(String path, String pipelineName) throws VaultException {
-        CustomMetadataRequest customMetadataRequest = new CustomMetadataRequest(
-                "some_group",
-                pipelineName,
-                "some_repository",
-                "some_organization",
-                "some_branch"
-        );
+    public Optional<String> getSecret(String path, String pipelineName) throws APIException {
+        PipelineMaterial pipelineMaterial = gocdPipelineApi.fetchPipelineMaterial(pipelineName);
+        CustomMetadataRequest customMetadataRequest = new CustomMetadataRequest(pipelineMaterial);
 
         createPipelineEntityAlias(customMetadataRequest);
 
@@ -69,7 +68,7 @@ public class OIDCPipelineIdentityProvider extends SecretEngine {
         return Optional.of(oidcToken(pipelineAuthToken, path));
     }
 
-    protected void createPipelineEntityAlias(CustomMetadataRequest customMetadataRequest) throws VaultException {
+    protected void createPipelineEntityAlias(CustomMetadataRequest customMetadataRequest) throws APIException {
         String entityId = getEntityId();
         String mountAccessor = getMountAccessor();
 
@@ -80,7 +79,7 @@ public class OIDCPipelineIdentityProvider extends SecretEngine {
                 customMetadataRequest
         );
 
-        RequestBody body = RequestBody.create(toJson(entityAliasRequest), JSON);
+        RequestBody body = RequestBody.create(toJson(entityAliasRequest), CONTENT_TYPE_JSON);
         Request request = new Request.Builder()
                 .header(X_VAULT_TOKEN, vaultConfig.getToken())
                 .url(vaultConfig.getAddress() + "/v1/identity/entity-alias")
@@ -90,14 +89,14 @@ public class OIDCPipelineIdentityProvider extends SecretEngine {
             Response response = client.newCall(request).execute();
 
             if (response.code() < 200 || response.code() >= 300) {
-                throw new VaultException("Could not create entity alias. Due to: " + response.body().string(), response.code());
+                throw new APIException("Could not create entity alias. Due to: " + response.body().string(), response.code());
             }
         } catch (IOException e) {
-            throw new VaultException(e);
+            throw new APIException(e);
         }
     }
 
-    private String getMountAccessor() throws VaultException {
+    private String getMountAccessor() throws APIException {
         Request request = new Request.Builder()
                 .header(X_VAULT_TOKEN, vaultConfig.getToken())
                 .url(vaultConfig.getAddress() + "/v1/sys/auth")
@@ -108,17 +107,17 @@ public class OIDCPipelineIdentityProvider extends SecretEngine {
             Response response = client.newCall(request).execute();
 
             if (response.code() < 200 || response.code() >= 300) {
-                throw new VaultException("Could not fetch auth mounts own token. Due to: " + response.body().string(), response.code());
+                throw new APIException("Could not fetch auth mounts own token. Due to: " + response.body().string(), response.code());
             }
 
             AuthMountsResponse authMountsResponse = GsonTransformer.fromJson(response.body().string(), AuthMountsResponse.class);
             return authMountsResponse.getToken().getAccessor();
         } catch (IOException e) {
-            throw new VaultException(e);
+            throw new APIException(e);
         }
     }
 
-    private String getEntityId() throws VaultException {
+    private String getEntityId() throws APIException {
         Request request = new Request.Builder()
                 .header(X_VAULT_TOKEN, vaultConfig.getToken())
                 .url(vaultConfig.getAddress() + "/v1/auth/token/lookup-self")
@@ -129,24 +128,24 @@ public class OIDCPipelineIdentityProvider extends SecretEngine {
             Response response = client.newCall(request).execute();
 
             if (response.code() < 200 || response.code() >= 300) {
-                throw new VaultException("Could not lookup own token. Due to: " + response.body().string(), response.code());
+                throw new APIException("Could not lookup own token. Due to: " + response.body().string(), response.code());
             }
 
             LookupResponse lookupResponse = dataResponseExtractor.extract(response, LookupResponse.class);
             return lookupResponse.getEntityId();
         } catch (IOException e) {
-            throw new VaultException(e);
+            throw new APIException(e);
         }
     }
 
-    protected String assumePipeline(String pipelineName) throws VaultException {
+    protected String assumePipeline(String pipelineName) throws APIException {
         CreateTokenRequest createTokenRequest = new CreateTokenRequest(
                 secretConfig.getPipelineTokenAuthBackendRole(),
                 secretConfig.getPipelinePolicy().isEmpty() ? null : secretConfig.getPipelinePolicy(),
                 entityAliasName(pipelineName)
         );
 
-        RequestBody body = RequestBody.create(toJson(createTokenRequest), JSON);
+        RequestBody body = RequestBody.create(toJson(createTokenRequest), CONTENT_TYPE_JSON);
         Request request = new Request.Builder()
                 .header(X_VAULT_TOKEN, vaultConfig.getToken())
                 .url(vaultConfig.getAddress() + "/v1/auth/token/create/" + secretConfig.getPipelineTokenAuthBackendRole())
@@ -156,17 +155,17 @@ public class OIDCPipelineIdentityProvider extends SecretEngine {
             Response response = client.newCall(request).execute();
 
             if (response.code() < 200 || response.code() >= 300) {
-                throw new VaultException("Could not create pipeline token. Due to: " + response.body().string(), response.code());
+                throw new APIException("Could not create pipeline token. Due to: " + response.body().string(), response.code());
             }
 
             TokenResponse tokenResponse = GsonTransformer.fromJson(response.body().string(), TokenResponse.class);
             return tokenResponse.getAuth().getClientToken();
         } catch (IOException e) {
-            throw new VaultException(e);
+            throw new APIException(e);
         }
     }
 
-    protected String oidcToken(String pipelineAuthToken, String path) throws VaultException {
+    protected String oidcToken(String pipelineAuthToken, String path) throws APIException {
 
         Request request = new Request.Builder()
                 .header(X_VAULT_TOKEN, pipelineAuthToken)
@@ -178,14 +177,14 @@ public class OIDCPipelineIdentityProvider extends SecretEngine {
             Response response = client.newCall(request).execute();
 
             if (response.code() < 200 || response.code() >= 300) {
-                throw new VaultException("Could not read OIDC token. Due to: " + response.body().string(), response.code());
+                throw new APIException("Could not read OIDC token. Due to: " + response.body().string(), response.code());
             }
 
             Type type = new TypeToken<DataResponse<OICDTokenResponse>>() {}.getType();
             DataResponse<OICDTokenResponse> dataResponse = GsonTransformer.fromJson(response.body().string(), type);
             return dataResponse.getData().getToken();
         } catch (IOException e) {
-            throw new VaultException(e);
+            throw new APIException(e);
         }
     }
 

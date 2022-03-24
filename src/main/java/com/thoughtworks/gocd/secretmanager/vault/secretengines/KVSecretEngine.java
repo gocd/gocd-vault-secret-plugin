@@ -18,6 +18,7 @@ package com.thoughtworks.gocd.secretmanager.vault.secretengines;
 
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultException;
+import com.thoughtworks.gocd.secretmanager.vault.http.exceptions.APIException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -31,9 +32,13 @@ public class KVSecretEngine extends SecretEngine {
     }
 
     @Override
-    public Optional<String> getSecret(String path, String key) throws VaultException {
+    public Optional<String> getSecret(String path, String key) throws APIException {
         if (secretsFromVault == null) {
-            secretsFromVault = getSecretData(path);
+            try {
+                secretsFromVault = getSecretData(path);
+            } catch (VaultException vaultException) {
+                throw new APIException(vaultException);
+            }
         }
 
         return Optional.ofNullable(secretsFromVault.get(key));

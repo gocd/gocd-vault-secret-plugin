@@ -35,7 +35,7 @@ public class DefaultContentTypeInterceptor implements Interceptor {
         Request originalRequest = chain.request();
         Request requestWithUserAgent = originalRequest
                 .newBuilder()
-                .header("Content-Type", OkHTTPClientFactory.JSON.toString())
+                .header("Content-Type", contentType)
                 .build();
 
         return chain.proceed(requestWithUserAgent);

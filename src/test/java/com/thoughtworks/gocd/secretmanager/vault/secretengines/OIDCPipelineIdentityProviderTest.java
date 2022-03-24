@@ -21,8 +21,10 @@ import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
 import com.thoughtworks.gocd.secretmanager.vault.annotations.JsonSource;
+import com.thoughtworks.gocd.secretmanager.vault.http.exceptions.APIException;
+import com.thoughtworks.gocd.secretmanager.vault.models.PipelineMaterial;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
-import com.thoughtworks.gocd.secretmanager.vault.request.CustomMetadataRequest;
+import com.thoughtworks.gocd.secretmanager.vault.request.vault.CustomMetadataRequest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -35,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -61,7 +64,7 @@ class OIDCPipelineIdentityProviderTest {
             "/mocks/vault/lookup-self.json",
             "/mocks/vault/auth-mounts.json"
     })
-    public void createPipelineEntityAliasTest(String secretConfigJson, String lookupSelfResponse, String authMountsResponse) throws VaultException, IOException, InterruptedException {
+    public void createPipelineEntityAliasTest(String secretConfigJson, String lookupSelfResponse, String authMountsResponse) throws VaultException, IOException, InterruptedException, APIException {
         SecretConfig secretConfig = GsonTransformer.fromJson(secretConfigJson, SecretConfig.class);
 
         mockWebServer.enqueue(new MockResponse().setBody(lookupSelfResponse));
@@ -113,7 +116,7 @@ class OIDCPipelineIdentityProviderTest {
             "/secret-config-oidc.json",
             "/mocks/vault/auth-token.json"
     })
-    public void assumePipelineTest(String secretConfigJson, String authTokenResponse) throws VaultException, IOException, InterruptedException {
+    public void assumePipelineTest(String secretConfigJson, String authTokenResponse) throws VaultException, IOException, InterruptedException, APIException {
         SecretConfig secretConfig = GsonTransformer.fromJson(secretConfigJson, SecretConfig.class);
 
         mockWebServer.enqueue(new MockResponse().setBody(authTokenResponse));
@@ -144,7 +147,7 @@ class OIDCPipelineIdentityProviderTest {
             "/secret-config-oidc.json",
             "/mocks/vault/oidc-token.json"
     })
-    public void oidcTokenTest(String secretConfigJson, String oidcTokenResponse) throws VaultException, IOException, InterruptedException {
+    public void oidcTokenTest(String secretConfigJson, String oidcTokenResponse) throws VaultException, IOException, InterruptedException, APIException {
         SecretConfig secretConfig = GsonTransformer.fromJson(secretConfigJson, SecretConfig.class);
 
         mockWebServer.enqueue(new MockResponse().setBody(oidcTokenResponse));
@@ -170,10 +173,9 @@ class OIDCPipelineIdentityProviderTest {
 
     @NotNull
     private String extractBodyAsString(RecordedRequest request) {
-        String body = new BufferedReader(new InputStreamReader(request.getBody().inputStream(), StandardCharsets.UTF_8))
+        return new BufferedReader(new InputStreamReader(request.getBody().inputStream(), StandardCharsets.UTF_8))
                 .lines()
                 .collect(Collectors.joining(""));
-        return body;
     }
 
 

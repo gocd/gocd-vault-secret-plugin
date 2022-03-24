@@ -1,0 +1,37 @@
+{
+  "_links": {
+    "doc": {
+      "href": "https://api.gocd.org/22.1.0/#scms"
+    },
+    "self": {
+      "href": "https://ci.dev.s-cloud.net/go/api/admin/scms/some-pipeline-pr"
+    },
+    "find": {
+      "href": "https://ci.dev.s-cloud.net/go/api/admin/scms/:material_name"
+    }
+  },
+  "id": "some-repository-pr",
+  "name": "some-repository-pr",
+  "auto_update": false,
+  "origin": {
+    "_links": {
+      "self": {
+        "href": "https://ci.dev.s-cloud.net/go/admin/config_xml"
+      },
+      "doc": {
+        "href": "https://api.gocd.org/22.1.0/#get-configuration"
+      }
+    },
+    "type": "gocd"
+  },
+  "plugin_metadata": {
+    "id": "github.pr",
+    "version": "1"
+  },
+  "configuration": [
+    {
+      "key": "url",
+      "value": "git@github.com:important-organization/some-repository"
+    }
+  ]
+}

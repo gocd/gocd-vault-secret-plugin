@@ -17,7 +17,7 @@
 package com.thoughtworks.gocd.secretmanager.vault.http;
 
 import cd.go.plugin.base.GsonTransformer;
-import com.thoughtworks.gocd.secretmanager.vault.request.DataResponse;
+import com.thoughtworks.gocd.secretmanager.vault.request.vault.DataResponse;
 import okhttp3.Response;
 
 import java.io.IOException;

@@ -24,16 +24,27 @@ import java.util.concurrent.TimeUnit;
 
 public class OkHTTPClientFactory {
 
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType CONTENT_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public OkHttpClient buildFor(SecretConfig secretConfig) {
+    public OkHttpClient vault(SecretConfig secretConfig) {
         // TODO: Handle SSL Config
         return new OkHttpClient.Builder()
                 .readTimeout(secretConfig.getReadTimeout(), TimeUnit.SECONDS)
                 .connectTimeout(secretConfig.getConnectionTimeout(), TimeUnit.SECONDS)
-                .addInterceptor(new DefaultContentTypeInterceptor(JSON.toString()))
+                .addInterceptor(new DefaultContentTypeInterceptor(CONTENT_TYPE_JSON.toString()))
                 .addInterceptor(new VaultHeaderInterceptor(secretConfig.getNameSpace()))
                 .addInterceptor(new RetryInterceptor(secretConfig.getRetryIntervalMilliseconds(), secretConfig.getMaxRetries()))
                 .build();
     }
+
+    public OkHttpClient gocd(SecretConfig secretConfig) {
+        // TODO: Handle SSL Config
+        return new OkHttpClient.Builder()
+                .readTimeout(secretConfig.getReadTimeout(), TimeUnit.SECONDS)
+                .connectTimeout(secretConfig.getConnectionTimeout(), TimeUnit.SECONDS)
+                .addInterceptor(new GoCDAuthenticationInterceptor(secretConfig.getGoCDUsername(), secretConfig.getGoCDPassword()))
+                .build();
+    }
+
+
 }

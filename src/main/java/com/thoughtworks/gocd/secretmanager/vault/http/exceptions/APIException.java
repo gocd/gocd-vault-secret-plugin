@@ -14,34 +14,15 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.request;
+package com.thoughtworks.gocd.secretmanager.vault.http.exceptions;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+public class APIException extends Exception {
 
-public class TokenResponse {
-
-    @Expose
-    @SerializedName("auth")
-    private AuthTokenResponse auth;
-
-    public TokenResponse() {
+    public APIException(Throwable cause) {
+        super(cause);
     }
 
-    public AuthTokenResponse getAuth() {
-        return auth;
-    }
-
-    public class AuthTokenResponse {
-        @Expose
-        @SerializedName("client_token")
-        private String clientToken;
-
-        public AuthTokenResponse() {
-        }
-
-        public String getClientToken() {
-            return clientToken;
-        }
+    public APIException(String message, int code) {
+        super(String.format("%s [Response code: %d]", message, code));
     }
 }

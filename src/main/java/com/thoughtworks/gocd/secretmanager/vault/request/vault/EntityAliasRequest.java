@@ -14,21 +14,33 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.request;
+package com.thoughtworks.gocd.secretmanager.vault.request.vault;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class DataResponse<T> {
+public class EntityAliasRequest {
 
     @Expose
-    @SerializedName("data")
-    private T data;
+    @SerializedName("name")
+    private String name;
 
-    public DataResponse() {
-    }
+    @Expose
+    @SerializedName("canonical_id")
+    private String canonicalId;
 
-    public T getData() {
-        return data;
+    @Expose
+    @SerializedName("mount_accessor")
+    private String mountAccessor;
+
+    @Expose
+    @SerializedName("custom_metadata")
+    private CustomMetadataRequest customMetadata;
+
+    public EntityAliasRequest(String name, String canonicalId, String mountAccessor, CustomMetadataRequest customMetadata) {
+        this.name = name;
+        this.canonicalId = canonicalId;
+        this.mountAccessor = mountAccessor;
+        this.customMetadata = customMetadata;
     }
 }

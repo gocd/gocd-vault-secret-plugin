@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.secretengines;
+package com.thoughtworks.gocd.secretmanager.vault.request.vault;
 
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultException;
-import com.thoughtworks.gocd.secretmanager.vault.http.exceptions.APIException;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.Optional;
+public class DataResponse<T> {
 
-public abstract class SecretEngine {
+    @Expose
+    @SerializedName("data")
+    private T data;
 
-    private final Vault vault;
-
-    public SecretEngine(Vault vault) {
-        this.vault = vault;
+    public DataResponse() {
     }
 
-    public abstract Optional<String> getSecret(String path, String key) throws APIException;
-
-    public Vault getVault() {
-        return vault;
+    public T getData() {
+        return data;
     }
 }

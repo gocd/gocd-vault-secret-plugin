@@ -54,7 +54,7 @@ public class OkHTTPClientTest {
     public void requestSucceedWithDefaultContentTypeAdded(String secretConfigJson) throws InterruptedException, IOException {
         SecretConfig secretConfig = GsonTransformer.fromJson(secretConfigJson, SecretConfig.class);
         OkHTTPClientFactory okHTTPClientFactory = new OkHTTPClientFactory();
-        OkHttpClient okHttpClient = okHTTPClientFactory.buildFor(secretConfig);
+        OkHttpClient okHttpClient = okHTTPClientFactory.vault(secretConfig);
 
         mockWebServer.enqueue(new MockResponse());
 
@@ -64,7 +64,7 @@ public class OkHTTPClientTest {
 
         RecordedRequest recordedRequest = mockWebServer.takeRequest();
 
-        assertThat(recordedRequest.getHeader("Content-Type")).isEqualTo(OkHTTPClientFactory.JSON.toString());
+        assertThat(recordedRequest.getHeader("Content-Type")).isEqualTo(OkHTTPClientFactory.CONTENT_TYPE_JSON.toString());
     }
 
     @ParameterizedTest
@@ -72,7 +72,7 @@ public class OkHTTPClientTest {
     public void requestSucceedWithRetries(String secretConfigJson) throws IOException {
         SecretConfig secretConfig = GsonTransformer.fromJson(secretConfigJson, SecretConfig.class);
         OkHTTPClientFactory okHTTPClientFactory = new OkHTTPClientFactory();
-        OkHttpClient okHttpClient = okHTTPClientFactory.buildFor(secretConfig);
+        OkHttpClient okHttpClient = okHTTPClientFactory.vault(secretConfig);
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(500));
         mockWebServer.enqueue(new MockResponse().setResponseCode(500));
@@ -92,7 +92,7 @@ public class OkHTTPClientTest {
     public void requestFailsWithMaxRetriesExceeded(String secretConfigJson) throws IOException {
         SecretConfig secretConfig = GsonTransformer.fromJson(secretConfigJson, SecretConfig.class);
         OkHTTPClientFactory okHTTPClientFactory = new OkHTTPClientFactory();
-        OkHttpClient okHttpClient = okHTTPClientFactory.buildFor(secretConfig);
+        OkHttpClient okHttpClient = okHTTPClientFactory.vault(secretConfig);
 
         mockWebServer.enqueue(new MockResponse().setResponseCode(500));
         mockWebServer.enqueue(new MockResponse().setResponseCode(500));
@@ -113,7 +113,7 @@ public class OkHTTPClientTest {
     public void requestSucceedsWithAddingNamespaceHeader(String secretConfigJson) throws IOException, InterruptedException {
         SecretConfig secretConfig = GsonTransformer.fromJson(secretConfigJson, SecretConfig.class);
         OkHTTPClientFactory okHTTPClientFactory = new OkHTTPClientFactory();
-        OkHttpClient okHttpClient = okHTTPClientFactory.buildFor(secretConfig);
+        OkHttpClient okHttpClient = okHTTPClientFactory.vault(secretConfig);
 
         mockWebServer.enqueue(new MockResponse());
 
@@ -132,7 +132,7 @@ public class OkHTTPClientTest {
         SecretConfig secretConfig = spy(GsonTransformer.fromJson(secretConfigJson, SecretConfig.class));
         OkHTTPClientFactory okHTTPClientFactory = new OkHTTPClientFactory();
         doReturn("").when(secretConfig).getNameSpace();
-        OkHttpClient okHttpClient = okHTTPClientFactory.buildFor(secretConfig);
+        OkHttpClient okHttpClient = okHTTPClientFactory.vault(secretConfig);
 
         mockWebServer.enqueue(new MockResponse());
 

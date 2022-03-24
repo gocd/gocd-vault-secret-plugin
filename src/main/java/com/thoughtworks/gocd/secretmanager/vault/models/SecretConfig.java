@@ -132,6 +132,21 @@ public class SecretConfig {
     @Property(name = "ServerPem", secure = true)
     private String serverPem;
 
+    @Expose
+    @SerializedName("GoCDServerUrl")
+    @Property(name = "GoCDServerUrl")
+    private String gocdServerURL;
+
+    @Expose
+    @SerializedName("GoCDUsername")
+    @Property(name = "GoCDUsername")
+    private String gocdUsername;
+
+    @Expose
+    @SerializedName("GoCDPassword")
+    @Property(name = "GoCDPassword", secure = true)
+    private String gocdPassword;
+
     public String getVaultUrl() {
         return vaultUrl;
     }
@@ -218,6 +233,21 @@ public class SecretConfig {
         return Arrays.asList(pipelinePolicy.split(",\\s*"));
     }
 
+    public String getGocdServerURL() {
+        if (gocdServerURL.endsWith("/")) {
+            return gocdServerURL.substring(0, gocdServerURL.length() - 1);
+        }
+        return gocdServerURL;
+    }
+
+    public String getGoCDUsername() {
+        return gocdUsername;
+    }
+
+    public String getGoCDPassword() {
+        return gocdPassword;
+    }
+
     public boolean isAuthMethodSupported() {
         return SUPPORTED_AUTH_METHODS.contains(authMethod.toLowerCase());
     }
@@ -252,7 +282,10 @@ public class SecretConfig {
                 Objects.equals(serverPem, that.serverPem) &&
                 Objects.equals(secretEngine, that.secretEngine) &&
                 Objects.equals(pipelineTokenAuthBackendRole, that.pipelineTokenAuthBackendRole) &&
-                Objects.equals(pipelinePolicy, that.pipelinePolicy);
+                Objects.equals(pipelinePolicy, that.pipelinePolicy) &&
+                Objects.equals(gocdUsername, that.gocdUsername) &&
+                Objects.equals(gocdPassword, that.gocdPassword);
+
     }
 
     @Override

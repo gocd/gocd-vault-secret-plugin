@@ -21,6 +21,7 @@ import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Logical;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import com.thoughtworks.gocd.secretmanager.vault.http.exceptions.APIException;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
 import com.thoughtworks.gocd.secretmanager.vault.secretengines.KVSecretEngine;
@@ -57,7 +58,7 @@ class SecretConfigLookupExecutorTest {
     }
 
     @Test
-    void shouldReturnLookupResponse() throws VaultException, JSONException {
+    void shouldReturnLookupResponse() throws APIException, JSONException {
         final SecretConfigRequest request = mock(SecretConfigRequest.class);
         final SecretConfig secretConfig = mock(SecretConfig.class);
         final KVSecretEngine kvSecretEngine = mock(KVSecretEngine.class);

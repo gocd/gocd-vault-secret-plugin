@@ -14,22 +14,34 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.request;
+package com.thoughtworks.gocd.secretmanager.vault.request.vault;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class LookupResponse {
+public class TokenResponse {
 
     @Expose
-    @SerializedName("entity_id")
-    private String entityId;
+    @SerializedName("auth")
+    private AuthTokenResponse auth;
 
-    public LookupResponse() {
+    public TokenResponse() {
     }
 
-    public String getEntityId() {
-        return entityId;
+    public AuthTokenResponse getAuth() {
+        return auth;
     }
 
+    public class AuthTokenResponse {
+        @Expose
+        @SerializedName("client_token")
+        private String clientToken;
+
+        public AuthTokenResponse() {
+        }
+
+        public String getClientToken() {
+            return clientToken;
+        }
+    }
 }

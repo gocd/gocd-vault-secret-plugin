@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.request;
+package com.thoughtworks.gocd.secretmanager.vault.request.vault;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.thoughtworks.gocd.secretmanager.vault.models.PipelineMaterial;
 
 public class CustomMetadataRequest {
 
@@ -47,6 +48,16 @@ public class CustomMetadataRequest {
         this.repository = repository;
         this.organization = organization;
         this.branch = branch;
+    }
+
+    public CustomMetadataRequest(PipelineMaterial pipelineMaterial) {
+        this(
+                pipelineMaterial.getGroup(),
+                pipelineMaterial.getName(),
+                pipelineMaterial.getRepositoryName(),
+                pipelineMaterial.getOrganization(),
+                pipelineMaterial.getBranch()
+        );
     }
 
     public String getPipeline() {

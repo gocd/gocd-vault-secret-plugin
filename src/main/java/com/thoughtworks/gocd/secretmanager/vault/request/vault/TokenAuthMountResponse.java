@@ -14,30 +14,21 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.request;
+package com.thoughtworks.gocd.secretmanager.vault.request.vault;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-public class CreateTokenRequest {
+public class TokenAuthMountResponse {
 
     @Expose
-    @SerializedName("role_name")
-    private String roleName;
+    @SerializedName("accessor")
+    private String accessor;
 
-    @Expose
-    @SerializedName("policies")
-    private List<String> policies;
+    public TokenAuthMountResponse() {
+    }
 
-    @Expose
-    @SerializedName("entity_alias")
-    private String entityAlias;
-
-    public CreateTokenRequest(String roleName, List<String> policies, String entityAlias) {
-        this.roleName = roleName;
-        this.policies = policies;
-        this.entityAlias = entityAlias;
+    public String getAccessor() {
+        return accessor;
     }
 }
