@@ -14,40 +14,21 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.request.gocd;
+package com.thoughtworks.gocd.secretmanager.vault.request.vault;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-public class PipelineConfigResponse {
+public class EntityResponse {
 
     @Expose
-    @SerializedName("name")
-    private String name;
+    @SerializedName("data")
+    private EntityDataResponse data;
 
-    @Expose
-    @SerializedName("group")
-    private String group;
-
-    @Expose
-    @SerializedName("materials")
-    private List<PipelineConfigMaterialResponse> materials;
-
-    public PipelineConfigResponse() {
+    public EntityResponse() {
     }
 
-    public String getName() {
-        return name;
+    public EntityDataResponse getData() {
+        return data;
     }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public List<PipelineConfigMaterialResponse> getMaterials() {
-        return materials;
-    }
-
 }

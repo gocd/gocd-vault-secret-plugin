@@ -23,7 +23,7 @@ gocdPlugin {
   goCdVersion = '20.9.0'
   name = 'Vault secret manager plugin'
   description = 'The plugin allows to use hashicorp vault as secret manager for the GoCD server'
-  vendorName = 'ThoughtWorks, Inc.'
+  vendorName = 'asdThoughtWorks, Inc.'
   vendorUrl = 'https://github.com/gocd-private/gocd-vault-secret-plugin'
 
   githubRepo {

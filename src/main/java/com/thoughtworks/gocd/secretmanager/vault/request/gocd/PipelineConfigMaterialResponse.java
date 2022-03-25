@@ -19,35 +19,24 @@ package com.thoughtworks.gocd.secretmanager.vault.request.gocd;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+public class PipelineConfigMaterialResponse {
 
-public class PipelineConfigResponse {
+        @Expose
+        @SerializedName("type")
+        private String type;
 
-    @Expose
-    @SerializedName("name")
-    private String name;
+        @Expose
+        @SerializedName("attributes")
+        private PipelineConfigMaterialAttributesResponse attributes;
 
-    @Expose
-    @SerializedName("group")
-    private String group;
+        public PipelineConfigMaterialResponse() {
+        }
 
-    @Expose
-    @SerializedName("materials")
-    private List<PipelineConfigMaterialResponse> materials;
+        public String getType() {
+            return type;
+        }
 
-    public PipelineConfigResponse() {
+        public PipelineConfigMaterialAttributesResponse getAttributes() {
+            return attributes;
+        }
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public List<PipelineConfigMaterialResponse> getMaterials() {
-        return materials;
-    }
-
-}

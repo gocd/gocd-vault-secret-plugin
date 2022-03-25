@@ -19,35 +19,24 @@ package com.thoughtworks.gocd.secretmanager.vault.request.gocd;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+public class SCMConfiguration {
 
-public class PipelineConfigResponse {
+        @Expose
+        @SerializedName("key")
+        private String key;
 
-    @Expose
-    @SerializedName("name")
-    private String name;
+        @Expose
+        @SerializedName("value")
+        private String value;
 
-    @Expose
-    @SerializedName("group")
-    private String group;
+        public SCMConfiguration() {
+        }
 
-    @Expose
-    @SerializedName("materials")
-    private List<PipelineConfigMaterialResponse> materials;
+        public String getKey() {
+            return key;
+        }
 
-    public PipelineConfigResponse() {
+        public String getValue() {
+            return value;
+        }
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public List<PipelineConfigMaterialResponse> getMaterials() {
-        return materials;
-    }
-
-}

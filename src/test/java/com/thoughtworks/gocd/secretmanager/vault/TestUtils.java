@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.request.gocd;
+package com.thoughtworks.gocd.secretmanager.vault;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import okhttp3.mockwebserver.RecordedRequest;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
-public class SCMResponse {
-    @Expose
-    @SerializedName("configuration")
-    private List<SCMConfiguration> configurations;
+public class TestUtils {
 
-    public SCMResponse() {
-    }
-
-    public List<SCMConfiguration> getConfigurations() {
-        return configurations;
+    public static String extractBodyAsString(RecordedRequest request) {
+        return new BufferedReader(new InputStreamReader(request.getBody().inputStream(), StandardCharsets.UTF_8))
+                .lines()
+                .collect(Collectors.joining(""));
     }
 }

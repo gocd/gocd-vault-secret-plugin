@@ -20,7 +20,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.thoughtworks.gocd.secretmanager.vault.models.PipelineMaterial;
 
-public class CustomMetadataRequest {
+public class MetadataRequest {
 
     @Expose
     @SerializedName("group")
@@ -42,7 +42,7 @@ public class CustomMetadataRequest {
     @SerializedName("branch")
     private String branch;
 
-    public CustomMetadataRequest(String group, String pipeline, String repository, String organization, String branch) {
+    public MetadataRequest(String group, String pipeline, String repository, String organization, String branch) {
         this.group = group;
         this.pipeline = pipeline;
         this.repository = repository;
@@ -50,7 +50,7 @@ public class CustomMetadataRequest {
         this.branch = branch;
     }
 
-    public CustomMetadataRequest(PipelineMaterial pipelineMaterial) {
+    public MetadataRequest(PipelineMaterial pipelineMaterial) {
         this(
                 pipelineMaterial.getGroup(),
                 pipelineMaterial.getName(),

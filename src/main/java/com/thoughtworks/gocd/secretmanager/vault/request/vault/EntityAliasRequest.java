@@ -33,14 +33,9 @@ public class EntityAliasRequest {
     @SerializedName("mount_accessor")
     private String mountAccessor;
 
-    @Expose
-    @SerializedName("custom_metadata")
-    private CustomMetadataRequest customMetadata;
-
-    public EntityAliasRequest(String name, String canonicalId, String mountAccessor, CustomMetadataRequest customMetadata) {
+    public EntityAliasRequest(String name, String canonicalId, String mountAccessor) {
         this.name = name;
         this.canonicalId = canonicalId;
         this.mountAccessor = mountAccessor;
-        this.customMetadata = customMetadata;
     }
 }

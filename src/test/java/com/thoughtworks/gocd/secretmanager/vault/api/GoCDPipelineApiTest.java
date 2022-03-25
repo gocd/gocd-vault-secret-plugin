@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.gocd;
+package com.thoughtworks.gocd.secretmanager.vault.api;
 
 import cd.go.plugin.base.GsonTransformer;
 import com.thoughtworks.gocd.secretmanager.vault.annotations.JsonSource;
@@ -27,14 +27,12 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class GoCDPipelineApiTest {

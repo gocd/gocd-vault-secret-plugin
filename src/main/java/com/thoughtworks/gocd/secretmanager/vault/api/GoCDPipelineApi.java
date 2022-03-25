@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.thoughtworks.gocd.secretmanager.vault.gocd;
+package com.thoughtworks.gocd.secretmanager.vault.api;
 
 import cd.go.plugin.base.GsonTransformer;
 import com.thoughtworks.gocd.secretmanager.vault.http.OkHTTPClientFactory;
 import com.thoughtworks.gocd.secretmanager.vault.http.exceptions.APIException;
 import com.thoughtworks.gocd.secretmanager.vault.models.PipelineMaterial;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
+import com.thoughtworks.gocd.secretmanager.vault.request.gocd.PipelineConfigMaterialResponse;
 import com.thoughtworks.gocd.secretmanager.vault.request.gocd.PipelineConfigResponse;
 import com.thoughtworks.gocd.secretmanager.vault.request.gocd.SCMResponse;
 import okhttp3.MediaType;
@@ -61,7 +62,7 @@ public class GoCDPipelineApi {
             }
 
             // Even if there are multiple pipeline definitions, we will always use the first found material.
-            PipelineConfigResponse.PipelineConfigMaterialResponse pipelineConfigMaterialResponse = pipelineConfigResponse.getMaterials().get(0);
+            PipelineConfigMaterialResponse pipelineConfigMaterialResponse = pipelineConfigResponse.getMaterials().get(0);
             String materialType = pipelineConfigMaterialResponse.getType();
             String repositoryUrl = pipelineConfigMaterialResponse.getAttributes().getUrl();
             if(materialType.equalsIgnoreCase("plugin")) {

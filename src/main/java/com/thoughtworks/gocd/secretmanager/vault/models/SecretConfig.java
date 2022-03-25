@@ -46,6 +46,7 @@ public class SecretConfig {
     public static final int DEFAULT_MAX_RETRIES = 0;
     public static final int DEFAULT_RETRY_INTERVAL_MS = 100;
     public static final String DEFAULT_SECRET_ENGINE = SECRET_ENGINE;
+    public static final String DEFAULT_ENTITY_NAME_PREFIX = "pipeline-identity";
 
     @Expose
     @SerializedName("VaultUrl")
@@ -66,6 +67,11 @@ public class SecretConfig {
     @SerializedName("PipelinePolicy")
     @Property(name = "PipelinePolicy")
     private String pipelinePolicy;
+
+    @Expose
+    @SerializedName("CustomEntityNamePrefix")
+    @Property(name = "CustomEntityNamePrefix")
+    private String customEntityNamePrefix;
 
     @Expose
     @SerializedName("VaultPath")
@@ -230,7 +236,7 @@ public class SecretConfig {
         if (isBlank(pipelinePolicy)) {
             return new ArrayList<>();
         }
-        return Arrays.asList(pipelinePolicy.split(",\\s*"));
+        return asList(pipelinePolicy.split(",\\s*"));
     }
 
     public String getGocdServerURL() {
@@ -238,6 +244,13 @@ public class SecretConfig {
             return gocdServerURL.substring(0, gocdServerURL.length() - 1);
         }
         return gocdServerURL;
+    }
+
+    public String getCustomEntityNamePrefix() {
+        if (isBlank(customEntityNamePrefix)) {
+            return DEFAULT_ENTITY_NAME_PREFIX;
+        }
+        return customEntityNamePrefix;
     }
 
     public String getGoCDUsername() {
@@ -284,7 +297,8 @@ public class SecretConfig {
                 Objects.equals(pipelineTokenAuthBackendRole, that.pipelineTokenAuthBackendRole) &&
                 Objects.equals(pipelinePolicy, that.pipelinePolicy) &&
                 Objects.equals(gocdUsername, that.gocdUsername) &&
-                Objects.equals(gocdPassword, that.gocdPassword);
+                Objects.equals(gocdPassword, that.gocdPassword) &&
+                Objects.equals(customEntityNamePrefix, that.customEntityNamePrefix);
 
     }
 
@@ -308,4 +322,5 @@ public class SecretConfig {
     public boolean isOIDCSecretEngine() {
         return OIDC_ENGINE.equalsIgnoreCase(secretEngine);
     }
+
 }
