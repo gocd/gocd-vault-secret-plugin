@@ -72,23 +72,52 @@ Alternatively, the configuration can be added directly to the config.xml using t
 
 `<rules>` tag defines where this secretConfig is allowed/denied to be referred. For more details about rules and examples refer the GoCD Secret Management [documentation](https://docs.gocd.org/current/configuration/secrets_management.html)
 
-
+#### Vault Configuration
 | Field                       | Required | Description                                                                                                                                                                                                                                                        |
 |-----------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | VaultUrl                    | Yes      | The url of the Vault server instance. If no address is explicitly set, the plugin will look to the `VAULT_ADDR` environment variable.                                                                                                                              |
-| VaultPath                   | Yes      | The vault path which holds the secrets as key-value pair (e.g. `secret/gocd`)                                                                                                                                                                                      |
 | ConnectionTimeout           | No       | The number of seconds to wait before giving up on establishing an HTTP(s) connection to the Vault server. If no openTimeout is explicitly set, then the object will look to the `VAULT_OPEN_TIMEOUT` environment variable. Defaults to `5 seconds`.                |
 | ReadTimeout                 | No       | Once connection has already been established, this is the number of seconds to wait for all data to finish downloading. If no readTimeout is explicitly set, then the object will look to the `VAULT_READ_TIMEOUT` environment variable. Defaults to `30 seconds`. |
 | ServerPem                   | No       | An X.509 certificate, in unencrypted PEM format with UTF-8 encoding to use when communicating with Vault over HTTPS                                                                                                                                                |
+| Max Retries                 | No       | Number of times to attempt to gather secrets from Vault. Defaults to `0`.                                                                                                                                                                                          |
+| Retry Interval Milliseconds | No       | Duration between retry attempts (set by `Max Retries`). Defaults to `100 milliseconds`.                                                                                                                                                                            |
+
+#### Authentication
+
+| Field                       | Required | Description                                                                                                                                                                                                                                                        |
+|-----------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | AuthMethod                  | Yes      | The auth method to use to authenticate with the Vault server, can be one of `token`, `approle` or `cert`                                                                                                                                                           |
 | Token                       | No       | Required if using `token` auth method. This is the token used to read secrets from Vault. Ensure this token has a longer ttl, the plugin will not be renewing the token.                                                                                           |
 | RoleId                      | No       | Required if using `approle` auth method. The plugins will use the configured `RoleId` and `SecretId` to authenticate with Vault.                                                                                                                                   |
 | SecretId                    | No       | Required if using `approle` auth method.                                                                                                                                                                                                                           |
 | ClientKeyPem                | No       | Required if using `cert` auth method. An RSA private key, in unencrypted PEM format with UTF-8 encoding.                                                                                                                                                           |
 | ClientPem                   | No       | Required if using `cert` auth method. An X.509 client certificate, in unencrypted PEM format with UTF-8 encoding.                                                                                                                                                  |
-| Max Retries                 | No       | Number of times to attempt to gather secrets from Vault. Defaults to `0`.                                                                                                                                                                                          |
-| Retry Interval Milliseconds | No       | Duration between retry attempts (set by `Max Retries`). Defaults to `100 milliseconds`.                                                                                                                                                                            |
 
+#### Secret Engines
+
+To configure secret engines, set the value `SecretEngine` to either `secret` for the key-value secret storage or to `oidc` to use Vault with GoCD with pipeline identity tokens.
+
+##### Key-Value Secret Engine
+
+| Field                       | Required | Description                                                                                                                                                                                                                                                        |
+|-----------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| SecretEngine                | No       | This defines the [secret engine type](https://www.vaultproject.io/docs/secrets). Either `secert` or `oidc`. Defaults to `secret`.                                                                                                                                  |
+| VaultPath                   | Yes      | The vault path which holds the secrets as key-value pair (e.g. `secret/gocd`)                                                                                                                                                                                      |
+
+##### OIDC Provider
+
+| Field                        | Required | Description                                                                                                                                                                                                                              |
+|------------------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| SecretEngine                 | Yes      | This defines the [secret engine type](https://www.vaultproject.io/docs/secrets). Either `secert` or `oidc`. Defaults to `secret`.                                                                                                        |
+| VaultPath                    | Yes      | Path which returns the OIDC token from Vault. Usually this starts with `/v1/identity/oidc/token/...`                                                                                                                                     |
+| PipelineTokenAuthBackendRole | Yes      | The Token-Auth Backend Role which is used by this plugin to assume a certain pipeline entity.                                                                                                                                            |
+| PipelinePolicy               | No       | An comma separated list of optional [pipeline policy names](https://www.vaultproject.io/api-docs/auth/token#policies) to restrict the permissions this assumed pipeline entity will have.                                                |
+| CustomEntityNamePrefix       | No       | Use this optional parameter to namespace your CI environments. When specified each pipeline entity created in Vault will have the syntax `<code>`{CustomEntityNamePrefix}-{PipelineName}`</code>`. Default is `<code>`pipeline-identity` |
+| GoCDServerUrl                | Yes      | GoCD server base URL to issue API calls.                                                                                                                                                                                                 |
+| GoCDUsername                 | Yes      | GoCD username which will be used by this plugin to authenticate against the GoCD API.                                                                                                                                                    |
+| GoCDPassword                 | Yes      | GoCD credentials which will be used by this plugin to authenticate against the GoCD API.                                                                                                                                                 |
+
+TODO: Describe how to use the OIDC provider
 
 ### Building the code base
 To build the jar, run `./gradlew clean test assemble`
