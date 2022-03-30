@@ -73,6 +73,7 @@ Alternatively, the configuration can be added directly to the config.xml using t
 `<rules>` tag defines where this secretConfig is allowed/denied to be referred. For more details about rules and examples refer the GoCD Secret Management [documentation](https://docs.gocd.org/current/configuration/secrets_management.html)
 
 #### Vault Configuration
+
 | Field                       | Required | Description                                                                                                                                                                                                                                                        |
 |-----------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | VaultUrl                    | Yes      | The url of the Vault server instance. If no address is explicitly set, the plugin will look to the `VAULT_ADDR` environment variable.                                                                                                                              |
@@ -117,7 +118,138 @@ To configure secret engines, set the value `SecretEngine` to either `secret` for
 | GoCDUsername                 | Yes      | GoCD username which will be used by this plugin to authenticate against the GoCD API.                                                                                                                                                    |
 | GoCDPassword                 | Yes      | GoCD credentials which will be used by this plugin to authenticate against the GoCD API.                                                                                                                                                 |
 
-TODO: Describe how to use the OIDC provider
+### OpenID Connect
+
+The GoCD Vault Secret Plugin can provide the calling pipeline with an own pipeline identity token, issued by Vault. It does so
+by fetching GoCD API to retrieve information about the pipeline and then to create an entity in Vault which contains
+these pipeline information as metadata. Finally, this newly created entity is used to create an OIDC Identity token (JWT) which
+is signed by Vault and contains the following pipeline information:
+
+| Field        | Description                                                                                                    |
+|--------------|----------------------------------------------------------------------------------------------------------------|
+| pipeline     | Pipeline name.                                                                                                 |
+| group        | Pipeline group.                                                                                                |
+| organization | Github organization or owning user account name (Other git servers are currently not supported).               |
+| repository   | Repository name.                                                                                               |
+| branch       | (Optional) Can be null. The current git branch. This is null if the SCM material is provided by a GoCD plugin. |
+
+Example OIDC Identity Token Body:
+
+```json
+{
+  "aud": "https://some.gocd.domain.com",
+  "branch": "main",
+  "exp": 1648541403,
+  "group": "defaultGroup",
+  "iat": 1648455003,
+  "iss": "https://some.vault.domain.com/v1/identity/oidc",
+  "namespace": "root",
+  "organization": "anrock-sc",
+  "pipeline": "deploy-gocd-vault-plugin",
+  "repository": "gocd-vault-secret-plugin",
+  "sub": "52349e30-cff8-7959-b61c-e9f9280d6233"
+}
+```
+
+#### Vault Configuration
+
+To enable the Vault OIDC Provider follow the [Vault OIDC Provider documentation](https://www.vaultproject.io/docs/concepts/oidc-provider#oidc-provider).
+The plugin will create for each new pipeline a new [entity](https://www.vaultproject.io/api-docs/secret/identity/entity) in vault with respective pipeline metadata
+(requires `read`, `write` and `update` permission to `/identity/entity/*`; policy should be restricted to entity name and attached policy name).  
+These metadata can be attached to the scopes of the OIDC Token using this template as an example:
+
+```plain
+  {
+    "pipeline":     {{identity.entity.metadata.pipeline}},
+    "group":        {{identity.entity.metadata.group}},
+    "repository":   {{identity.entity.metadata.repository}},
+    "organization": {{identity.entity.metadata.organization}},
+    "branch":       {{identity.entity.metadata.branch}}
+  }
+```
+
+This plugin needs to assume the newly crated pipeline entity in order to retrieve a pipeline identity token. For that the plugin
+logs in as a pipeline via the token authentication endpoint. In order to do so, a [token auth backend role](https://www.vaultproject.io/api-docs/auth/token#create-update-token-role) 
+needs to be created in Vault, which is bound to a policy that allows to retrieve an OIDC Identity token. 
+
+Example terraform definition for this auth token backend role:
+```hcl
+resource "vault_policy" "<PIPELINE_POLICY_NAME>" {
+  name   = "<PIPELINE_POLICY_NAME>"
+  policy = <<EOT
+    path "identity/oidc/token/<OIDC_TOKEN_ENDPOINT_NAME>" {
+      capabilities = ["read"]
+    }
+  EOT
+}
+
+resource "vault_token_auth_backend_role" "<AUTH_TOKEN_BACKEND_ROLE_NAME>" {
+  role_name              = "<AUTH_TOKEN_BACKEND_ROLE_NAME>"
+  allowed_policies       = [vault_policy.<PIPELINE_POLICY_NAME>.name]
+  allowed_entity_aliases = ["<CUSTOM_ENTITY_NAME_PREFIX->entity-alias-*"]
+}
+```
+
+In addition to the pipeline entity the plugin will also create an [entity alias](https://www.vaultproject.io/api-docs/secret/identity/entity-alias) 
+(requires `create` and `update` permission to `/identity/entity-alias`) bound to the newly created entity,
+as well as the token authentication endpoint (requires `read` permission to the `/sys/auth` path). 
+To assume a certain pipeline, a new vault token is created (requires `update` permission to `auth/token/create/<AUTH_TOKEN_BACKEND_ROLE_NAME>`).
+Using the new Vault token a request to fetch the OIDC Identity Token is done and returned to the pipeline. 
+
+
+#### Required Vault Policies
+
+**Required policy for the vault plugin**
+
+```hcl
+# Used to read token accessor
+path "sys/auth" {
+  capabilities = ["read"]
+}
+
+# Assume identity of pipeline 
+path "auth/token/create/<AUTH_TOKEN_BACKEND_ROLE_NAME>" {
+  capabilities = ["update"]
+}
+
+# Create entity alias for pipelines
+path "identity/entity-alias" {
+  capabilities = ["create", "update"]
+  allowed_parameters = {
+    "mount_accessor" = ["auth_token_*"]
+    "name" = ["<CUSTOM_ENTITY_PREFIX-><PIPELINE_NAME>-entity-alias-*"]
+    "*" = []
+  }
+}
+
+# Create entity for pipelines
+path "identity/entity/*" {
+  capabilities = ["create", "update", "read"]
+  allowed_parameters = {
+    "name" = ["<CUSTOM_ENTITY_PREFIX>-*"]
+    "policies" = ["<PIPELINE_POLICIES_LIST>"]
+    "*" = []
+  }
+}
+```
+
+**Required policy for a pipeline:**
+
+```hcl
+path "identity/oidc/token/<VAULT_OIDC_IDENTITY_ROLE_NAME>" {
+    capabilities = ["read"]
+}
+```
+
+#### Usage
+
+To use this plugin add this SECRET reference to your pipeline configuration:
+```plain
+ENV_NAME={{SECRET:[<VAULT_PLUGIN_ID>][<PIPELINE_NAME>]}}
+```
+
+The pipeline name as a secret key is important for the plugin to know which pipeline identity token should be returned. 
+This value is trusted by the plugin and should be set by a trusted party in order to prevent pipeline privilege escalation.
 
 ### Building the code base
 To build the jar, run `./gradlew clean test assemble`
