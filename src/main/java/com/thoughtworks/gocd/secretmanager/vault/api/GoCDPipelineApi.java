@@ -61,20 +61,42 @@ public class GoCDPipelineApi {
                 throw new APIException(String.format("Could not fetch pipeline configuration for pipeline %s. Due to: %s", pipeline, response.body().string()), response.code());
             }
 
-            // Even if there are multiple pipeline definitions, we will always use the first found material.
-            PipelineConfigMaterialResponse pipelineConfigMaterialResponse = pipelineConfigResponse.getMaterials().get(0);
+            // If possible we use git materials, otherwise we use first found material
+            PipelineConfigMaterialResponse pipelineConfigMaterialResponse = pipelineConfigResponse.getMaterials()
+                    .stream()
+                    .filter(materials -> materials.getType().equalsIgnoreCase("git") || materials.getType().equalsIgnoreCase("plugin"))
+                    .findFirst()
+                    .orElse(pipelineConfigResponse.getMaterials().get(0));
+
             String materialType = pipelineConfigMaterialResponse.getType();
-            String repositoryUrl = pipelineConfigMaterialResponse.getAttributes().getUrl();
-            if(materialType.equalsIgnoreCase("plugin")) {
-                repositoryUrl = fetchSCMRepositoryUrl(pipelineConfigResponse.getName());
+            switch (materialType) {
+                case "plugin":
+                    return new PipelineMaterial(
+                            pipelineConfigResponse.getName(),
+                            pipelineConfigResponse.getGroup(),
+                            pipelineConfigMaterialResponse.getAttributes().getBranch(),
+                            fetchSCMRepositoryUrl(pipelineConfigMaterialResponse.getAttributes().getRef())
+                    );
+                case "dependency":
+                    PipelineMaterial pipelineMaterial = fetchPipelineMaterial(pipelineConfigMaterialResponse.getAttributes().getPipeline());
+                    return new PipelineMaterial(
+                            pipelineConfigResponse.getName(),
+                            pipelineConfigResponse.getGroup(),
+                            pipelineMaterial.getOrganization(),
+                            pipelineMaterial.getRepositoryName(),
+                            pipelineMaterial.getBranch()
+                    );
+                case "git":
+                    return new PipelineMaterial(
+                            pipelineConfigResponse.getName(),
+                            pipelineConfigResponse.getGroup(),
+                            pipelineConfigMaterialResponse.getAttributes().getBranch(),
+                            pipelineConfigMaterialResponse.getAttributes().getUrl()
+                    );
+                default:
+                    throw new IllegalStateException(String.format("Unexpected material type %s", materialType));
             }
 
-            return new PipelineMaterial(
-                    pipelineConfigResponse.getName(),
-                    pipelineConfigResponse.getGroup(),
-                    pipelineConfigMaterialResponse.getAttributes().getBranch(),
-                    repositoryUrl
-            );
         } catch (IOException e) {
             throw new APIException(e);
         }

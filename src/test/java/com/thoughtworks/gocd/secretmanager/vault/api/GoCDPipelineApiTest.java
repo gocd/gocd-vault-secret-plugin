@@ -111,7 +111,7 @@ class GoCDPipelineApiTest {
         assertThat(scmConfigRequest.getHeader("Authorization")).isEqualTo(basicAuth);
         assertThat(scmConfigRequest.getMethod()).isEqualTo("GET");
         assertThat(scmConfigRequest.getHeader("Accept")).isEqualTo(GoCDPipelineApi.ACCEPT_GOCD_V4_JSON.toString());
-        assertThat(scmConfigRequest.getPath()).isEqualTo("/go/api/admin/scms/some-pipeline");
+        assertThat(scmConfigRequest.getPath()).isEqualTo("/go/api/admin/scms/some-repository-pr");
 
 
         assertThat(pipelineMaterial).isEqualTo(
@@ -121,6 +121,83 @@ class GoCDPipelineApiTest {
                         "important-organization",
                         "some-repository",
                         null
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @JsonSource(jsonFiles = {
+            "/secret-config-oidc.json",
+            "/mocks/gocd/pipeline-config-dependency.json",
+            "/mocks/gocd/pipeline-config.json"
+    })
+    public void fetchPipelineMaterialTestSucceedsForDependencyMaterial(String secretConfigJson, String pipelineConfigResponse, String pipelineConfig) throws IOException, InterruptedException, APIException {
+        SecretConfig secretConfig = spy(GsonTransformer.fromJson(secretConfigJson, SecretConfig.class));
+
+        mockWebServer.enqueue(new MockResponse().setBody(pipelineConfigResponse));
+        mockWebServer.enqueue(new MockResponse().setBody(pipelineConfig));
+        mockWebServer.start();
+
+        doReturn(getMockServerAddress()).when(secretConfig).getGocdServerURL();
+        GoCDPipelineApi goCDPipelineApi = new GoCDPipelineApi(secretConfig);
+
+        PipelineMaterial pipelineMaterial = goCDPipelineApi.fetchPipelineMaterial("some-pipeline-with-dependencies");
+        RecordedRequest pipelineConfigrequest = mockWebServer.takeRequest();
+
+        String basicAuth = "Basic " + Base64.getEncoder().encodeToString("username:supersecret".getBytes(StandardCharsets.UTF_8));
+        assertThat(pipelineConfigrequest.getHeader("Authorization")).isEqualTo(basicAuth);
+        assertThat(pipelineConfigrequest.getMethod()).isEqualTo("GET");
+        assertThat(pipelineConfigrequest.getHeader("Accept")).isEqualTo(GoCDPipelineApi.ACCEPT_GOCD_V11_JSON.toString());
+        assertThat(pipelineConfigrequest.getPath()).isEqualTo("/go/api/admin/pipelines/some-pipeline-with-dependencies");
+
+        RecordedRequest scmConfigRequest = mockWebServer.takeRequest();
+        assertThat(scmConfigRequest.getHeader("Authorization")).isEqualTo(basicAuth);
+        assertThat(scmConfigRequest.getMethod()).isEqualTo("GET");
+        assertThat(scmConfigRequest.getHeader("Accept")).isEqualTo(GoCDPipelineApi.ACCEPT_GOCD_V11_JSON.toString());
+        assertThat(scmConfigRequest.getPath()).isEqualTo("/go/api/admin/pipelines/some-pipeline");
+
+
+        assertThat(pipelineMaterial).isEqualTo(
+                new PipelineMaterial(
+                        "some-pipeline-with-dependencies",
+                        "dev",
+                        "important-organization",
+                        "some-repository",
+                        "main"
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @JsonSource(jsonFiles = {
+            "/secret-config-oidc.json",
+            "/mocks/gocd/pipeline-config-dependency-wrong-order.json"
+    })
+    public void fetchPipelineMaterialTestSucceedsForDependencyMaterialWrongOrder(String secretConfigJson, String pipelineConfigResponse) throws IOException, InterruptedException, APIException {
+        SecretConfig secretConfig = spy(GsonTransformer.fromJson(secretConfigJson, SecretConfig.class));
+
+        mockWebServer.enqueue(new MockResponse().setBody(pipelineConfigResponse));
+        mockWebServer.start();
+
+        doReturn(getMockServerAddress()).when(secretConfig).getGocdServerURL();
+        GoCDPipelineApi goCDPipelineApi = new GoCDPipelineApi(secretConfig);
+
+        PipelineMaterial pipelineMaterial = goCDPipelineApi.fetchPipelineMaterial("some-pipeline-with-dependencies-wrong-order");
+        RecordedRequest pipelineConfigrequest = mockWebServer.takeRequest();
+
+        String basicAuth = "Basic " + Base64.getEncoder().encodeToString("username:supersecret".getBytes(StandardCharsets.UTF_8));
+        assertThat(pipelineConfigrequest.getHeader("Authorization")).isEqualTo(basicAuth);
+        assertThat(pipelineConfigrequest.getMethod()).isEqualTo("GET");
+        assertThat(pipelineConfigrequest.getHeader("Accept")).isEqualTo(GoCDPipelineApi.ACCEPT_GOCD_V11_JSON.toString());
+        assertThat(pipelineConfigrequest.getPath()).isEqualTo("/go/api/admin/pipelines/some-pipeline-with-dependencies-wrong-order");
+
+        assertThat(pipelineMaterial).isEqualTo(
+                new PipelineMaterial(
+                        "some-pipeline-with-dependencies-wrong-order",
+                        "dev",
+                        "important-organization",
+                        "some-repository",
+                        "main"
                 )
         );
     }

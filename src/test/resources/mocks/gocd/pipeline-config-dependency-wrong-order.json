@@ -1,0 +1,111 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://gocd.com/go/api/admin/pipelines/some-pipeline-pr"
+    },
+    "doc": {
+      "href": "https://api.gocd.org/22.1.0/#pipeline-config"
+    },
+    "find": {
+      "href": "https://gocd.com/go/api/admin/pipelines/:pipeline_name"
+    }
+  },
+  "label_template": "${COUNT}-${git[:7]}",
+  "lock_behavior": "none",
+  "name": "some-pipeline-with-dependencies-wrong-order",
+  "template": null,
+  "group": "dev",
+  "origin": {
+    "_links": {
+      "self": {
+        "href": "https://gocd.com/go/api/admin/config_repos/some-pipeline"
+      },
+      "doc": {
+        "href": "https://api.gocd.org/22.1.0/#config-repos"
+      },
+      "find": {
+        "href": "https://gocd.com/go/api/admin/config_repos/:id"
+      }
+    },
+    "type": "config_repo",
+    "id": "some-pipeline-with-dependencies-wrong-order"
+  },
+  "parameters": [],
+  "environment_variables": [
+    {
+      "secure": false,
+      "name": "OIDC_TOKEN",
+      "value": "{{SECRET:[vault][some-pipeline]}}"
+    }
+  ],
+  "materials": [
+    {
+      "type": "dependency",
+      "attributes": {
+        "pipeline": "some-pipeline",
+        "stage": "deploy",
+        "name": "some-pipeline",
+        "auto_update": true,
+        "ignore_for_scheduling": false
+      }
+    },
+    {
+      "type": "git",
+      "attributes": {
+        "url": "git@github.com:important-organization/some-repository.git",
+        "destination": "some-repository",
+        "filter": null,
+        "invert_filter": true,
+        "name": "some-pipeline",
+        "auto_update": false,
+        "branch": "main",
+        "submodule_folder": null,
+        "shallow_clone": false
+      }
+    }
+  ],
+  "stages": [
+    {
+      "name": "test",
+      "fetch_materials": true,
+      "clean_working_directory": false,
+      "never_cleanup_artifacts": false,
+      "approval": {
+        "type": "success",
+        "allow_only_on_success": false,
+        "authorization": {
+          "roles": [],
+          "users": []
+        }
+      },
+      "environment_variables": [],
+      "jobs": [
+        {
+          "name": "test",
+          "run_instance_count": null,
+          "timeout": null,
+          "environment_variables": [],
+          "resources": [
+            "build"
+          ],
+          "tasks": [
+            {
+              "type": "exec",
+              "attributes": {
+                "run_if": [
+                  "passed"
+                ],
+                "command": "/opt/script.sh",
+                "args": ""
+              }
+            }
+          ],
+          "tabs": [],
+          "artifacts": []
+        }
+      ]
+    }
+  ],
+  "tracking_tool": null,
+  "timer": null
+}

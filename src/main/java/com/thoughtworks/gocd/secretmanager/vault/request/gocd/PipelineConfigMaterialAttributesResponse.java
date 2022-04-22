@@ -21,22 +21,40 @@ import com.google.gson.annotations.SerializedName;
 
 public class PipelineConfigMaterialAttributesResponse {
 
-        @Expose
-        @SerializedName("url")
-        private String url;
+    // set if material type is git
+    @Expose
+    @SerializedName("url")
+    private String url;
+    @Expose
+    @SerializedName("branch")
+    private String branch;
 
-        @Expose
-        @SerializedName("branch")
-        private String branch;
+    // set if pipeline type is plugin
+    @Expose
+    @SerializedName("ref")
+    private String ref;
 
-        public PipelineConfigMaterialAttributesResponse() {
-        }
+    // set if material type is dependency
+    @Expose
+    @SerializedName("pipeline")
+    private String pipeline;
 
-        public String getUrl() {
-            return url;
-        }
-
-        public String getBranch() {
-            return branch;
-        }
+    public PipelineConfigMaterialAttributesResponse() {
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public String getPipeline() {
+        return pipeline;
+    }
+}
