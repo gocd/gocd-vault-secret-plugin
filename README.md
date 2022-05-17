@@ -144,12 +144,25 @@ Example OIDC Identity Token Body:
   "iat": 1648455003,
   "iss": "https://some.vault.domain.com/v1/identity/oidc",
   "namespace": "root",
-  "organization": "anrock-sc",
+  "organization": "anroc",
   "pipeline": "deploy-gocd-vault-plugin",
   "repository": "gocd-vault-secret-plugin",
   "sub": "52349e30-cff8-7959-b61c-e9f9280d6233"
 }
 ```
+
+Identity tokens can be used to authenticate to Vault to use Vaults rich API to fetch more then just static key-value secrets,
+as well as authenticating to other services such as [Google Cloud Project](https://cloud.google.com/iam/docs/workload-identity-federation).
+
+##### Claim building
+
+As GoCD supports multiple material configuration, it highly depends on the order of the multiple definition as well as 
+the type of material configured. The supported cases are defined below.
+
+1. If multiple materials are defined, the first Git or Git Plugin material will be used.
+2. If only pipeline dependency materials are defined, the first dependency will be used to resolve the referenced configuration.
+
+Gor Git plugin materials, no branch information can be fetched and the branch claim remains empty.
 
 #### Vault Configuration
 
@@ -245,7 +258,7 @@ path "identity/oidc/token/<VAULT_OIDC_IDENTITY_ROLE_NAME>" {
 
 To use this plugin add this SECRET reference to your pipeline configuration:
 ```plain
-ENV_NAME={{SECRET:[<VAULT_PLUGIN_ID>][<PIPELINE_NAME>]}}
+IDENTITY_TOKEN={{SECRET:[<VAULT_PLUGIN_ID>][<PIPELINE_NAME>]}}
 ```
 
 The pipeline name as a secret key is important for the plugin to know which pipeline identity token should be returned. 
