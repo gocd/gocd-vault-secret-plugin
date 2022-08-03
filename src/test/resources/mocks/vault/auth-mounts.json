@@ -1,0 +1,15 @@
+{
+  "github/": {
+    "type": "github",
+    "description": "GitHub auth"
+  },
+  "token/": {
+    "config": {
+      "default_lease_ttl": 0,
+      "max_lease_ttl": 0
+    },
+    "description": "token based credentials",
+    "accessor": "auth_token_12ac23",
+    "type": "token"
+  }
+}

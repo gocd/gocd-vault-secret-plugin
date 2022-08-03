@@ -23,9 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -38,17 +36,42 @@ public class SecretConfig {
     public static final String TOKEN_AUTH_METHOD = "token";
     public static final String APPROLE_AUTH_METHOD = "approle";
     public static final String CERT_AUTH_METHOD = "cert";
+    public static final String SECRET_ENGINE = "secret";
+    public static final String OIDC_ENGINE = "oidc";
 
     public static final List<String> SUPPORTED_AUTH_METHODS = asList(TOKEN_AUTH_METHOD, APPROLE_AUTH_METHOD, CERT_AUTH_METHOD);
+    public static final List<String> SUPPORTED_SECRET_ENGINES = asList(SECRET_ENGINE, OIDC_ENGINE);
     public static final int DEFAULT_CONNECTION_TIMEOUT = 5;
     public static final int DEFAULT_READ_TIMEOUT = 30;
     public static final int DEFAULT_MAX_RETRIES = 0;
     public static final int DEFAULT_RETRY_INTERVAL_MS = 100;
+    public static final String DEFAULT_SECRET_ENGINE = SECRET_ENGINE;
+    public static final String DEFAULT_ENTITY_NAME_PREFIX = "pipeline-identity";
 
     @Expose
     @SerializedName("VaultUrl")
     @Property(name = "VaultUrl", required = true)
     private String vaultUrl;
+
+    @Expose
+    @SerializedName("SecretEngine")
+    @Property(name = "SecretEngine")
+    private String secretEngine;
+
+    @Expose
+    @SerializedName("PipelineTokenAuthBackendRole")
+    @Property(name = "PipelineTokenAuthBackendRole")
+    private String pipelineTokenAuthBackendRole;
+
+    @Expose
+    @SerializedName("PipelinePolicy")
+    @Property(name = "PipelinePolicy")
+    private String pipelinePolicy;
+
+    @Expose
+    @SerializedName("CustomEntityNamePrefix")
+    @Property(name = "CustomEntityNamePrefix")
+    private String customEntityNamePrefix;
 
     @Expose
     @SerializedName("VaultPath")
@@ -114,6 +137,21 @@ public class SecretConfig {
     @SerializedName("ServerPem")
     @Property(name = "ServerPem", secure = true)
     private String serverPem;
+
+    @Expose
+    @SerializedName("GoCDServerUrl")
+    @Property(name = "GoCDServerUrl")
+    private String gocdServerURL;
+
+    @Expose
+    @SerializedName("GoCDUsername")
+    @Property(name = "GoCDUsername")
+    private String gocdUsername;
+
+    @Expose
+    @SerializedName("GoCDPassword")
+    @Property(name = "GoCDPassword", secure = true)
+    private String gocdPassword;
 
     public String getVaultUrl() {
         return vaultUrl;
@@ -183,8 +221,52 @@ public class SecretConfig {
         return serverPem;
     }
 
+    public String getSecretEngine() {
+        if (isBlank(secretEngine)) {
+            return DEFAULT_SECRET_ENGINE;
+        }
+        return secretEngine;
+    }
+
+    public String getPipelineTokenAuthBackendRole() {
+        return pipelineTokenAuthBackendRole;
+    }
+
+    public List<String> getPipelinePolicy() {
+        if (isBlank(pipelinePolicy)) {
+            return new ArrayList<>();
+        }
+        return asList(pipelinePolicy.split(",\\s*"));
+    }
+
+    public String getGocdServerURL() {
+        if (gocdServerURL.endsWith("/")) {
+            return gocdServerURL.substring(0, gocdServerURL.length() - 1);
+        }
+        return gocdServerURL;
+    }
+
+    public String getCustomEntityNamePrefix() {
+        if (isBlank(customEntityNamePrefix)) {
+            return DEFAULT_ENTITY_NAME_PREFIX;
+        }
+        return customEntityNamePrefix;
+    }
+
+    public String getGoCDUsername() {
+        return gocdUsername;
+    }
+
+    public String getGoCDPassword() {
+        return gocdPassword;
+    }
+
     public boolean isAuthMethodSupported() {
         return SUPPORTED_AUTH_METHODS.contains(authMethod.toLowerCase());
+    }
+
+    public boolean isSecretEngineSupported() {
+        return SUPPORTED_SECRET_ENGINES.contains(getSecretEngine().toLowerCase());
     }
 
     public static SecretConfig fromJSON(Map<String, String> request) {
@@ -210,12 +292,19 @@ public class SecretConfig {
                 Objects.equals(secretId, that.secretId) &&
                 Objects.equals(clientKeyPem, that.clientKeyPem) &&
                 Objects.equals(clientPem, that.clientPem) &&
-                Objects.equals(serverPem, that.serverPem);
+                Objects.equals(serverPem, that.serverPem) &&
+                Objects.equals(secretEngine, that.secretEngine) &&
+                Objects.equals(pipelineTokenAuthBackendRole, that.pipelineTokenAuthBackendRole) &&
+                Objects.equals(pipelinePolicy, that.pipelinePolicy) &&
+                Objects.equals(gocdUsername, that.gocdUsername) &&
+                Objects.equals(gocdPassword, that.gocdPassword) &&
+                Objects.equals(customEntityNamePrefix, that.customEntityNamePrefix);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(vaultUrl, vaultPath, nameSpace, connectionTimeout, readTimeout, maxRetries, retryIntervalMilliseconds, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem);
+        return Objects.hash(vaultUrl, vaultPath, nameSpace, connectionTimeout, readTimeout, maxRetries, retryIntervalMilliseconds, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem, secretEngine);
     }
 
     public boolean isTokenAuthentication() {
@@ -229,4 +318,9 @@ public class SecretConfig {
     public boolean isCertAuthentication() {
         return CERT_AUTH_METHOD.equalsIgnoreCase(authMethod);
     }
+
+    public boolean isOIDCSecretEngine() {
+        return OIDC_ENGINE.equalsIgnoreCase(secretEngine);
+    }
+
 }

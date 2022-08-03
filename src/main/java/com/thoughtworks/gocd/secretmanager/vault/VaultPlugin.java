@@ -29,10 +29,7 @@ import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
-import com.thoughtworks.gocd.secretmanager.vault.validation.AppRoleAuthMethodValidator;
-import com.thoughtworks.gocd.secretmanager.vault.validation.AuthMethodValidator;
-import com.thoughtworks.gocd.secretmanager.vault.validation.CertAuthMethodValidator;
-import com.thoughtworks.gocd.secretmanager.vault.validation.TokenAuthMethodValidator;
+import com.thoughtworks.gocd.secretmanager.vault.validation.*;
 
 import static java.util.Collections.singletonList;
 
@@ -49,7 +46,8 @@ public class VaultPlugin implements GoPlugin {
                 .configMetadata(SecretConfig.class)
                 .configView("/secrets.template.html")
                 .validateSecretConfig(new AuthMethodValidator(), new CertAuthMethodValidator(),
-                        new AppRoleAuthMethodValidator(), new TokenAuthMethodValidator())
+                        new AppRoleAuthMethodValidator(), new TokenAuthMethodValidator(),
+                        new SecretEngineValidator(), new OIDCSecretEngineValidator())
                 .lookup(new SecretConfigLookupExecutor())
                 .build();
     }

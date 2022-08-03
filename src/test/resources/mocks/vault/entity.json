@@ -1,0 +1,32 @@
+{
+  "request_id": "9fec9dfc-f5c1-303e-e73c-4520f38699b5",
+  "lease_id": "",
+  "renewable": false,
+  "lease_duration": 0,
+  "data": {
+    "aliases": [],
+    "creation_time": "2022-03-25T12:57:29.360263666Z",
+    "direct_group_ids": [],
+    "disabled": false,
+    "group_ids": [],
+    "id": "1ab2dbd4-ff87-8291-5e08-56a0083424e1",
+    "inherited_group_ids": [],
+    "last_update_time": "2022-03-25T12:58:48.788584567Z",
+    "merged_entity_ids": null,
+    "metadata": {
+      "branch": "some_branch",
+      "group": "some_group",
+      "organization": "some_org",
+      "pipeline": "some_pipeline",
+      "repository": "some_repository"
+    },
+    "name": "pipeline-identity-dev-test-pipeline",
+    "namespace_id": "root",
+    "policies": [
+      "gocd-pipeline-policy-dev-test"
+    ]
+  },
+  "wrap_info": null,
+  "warnings": null,
+  "auth": null
+}
