@@ -23,7 +23,7 @@ import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.isBlank;
 
 public class CertAuthMethodValidator implements Validator {
     @Override
@@ -33,11 +33,11 @@ public class CertAuthMethodValidator implements Validator {
         ValidationResult result = new ValidationResult();
 
         if (secretConfig.isCertAuthentication()) {
-            if (isEmpty(secretConfig.getClientPem())) {
+            if (isBlank(secretConfig.getClientPem())) {
                 result.add("ClientPem", "ClientPem must not be blank.");
             }
 
-            if (isEmpty(secretConfig.getClientKeyPem())) {
+            if (isBlank(secretConfig.getClientKeyPem())) {
                 result.add("ClientKeyPem", "ClientKeyPem must not be blank.");
             }
         }

@@ -21,7 +21,7 @@ import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.*;
 
 public class VaultConfigBuilder {
     public VaultConfig configFrom(SecretConfig secretConfig) throws VaultException {
@@ -30,13 +30,13 @@ public class VaultConfigBuilder {
                 .openTimeout(secretConfig.getConnectionTimeout())
                 .readTimeout(secretConfig.getReadTimeout())
                 .sslConfig(sslConfig(secretConfig).build());
-        if (isNotBlank(secretConfig.getNameSpace()))
+        if (!isBlank(secretConfig.getNameSpace()))
             request = request.nameSpace(secretConfig.getNameSpace());
         return request.build();
     }
 
     protected SslConfig sslConfig(SecretConfig secretConfig) {
-        if (isNotBlank(secretConfig.getServerPem())) {
+        if (!isBlank(secretConfig.getServerPem())) {
             return new SslConfig()
                     .pemUTF8(secretConfig.getServerPem())
                     .verify(true);

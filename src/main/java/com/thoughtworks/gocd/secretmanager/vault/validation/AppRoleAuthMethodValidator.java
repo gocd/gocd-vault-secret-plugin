@@ -22,7 +22,7 @@ import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.isBlank;
 
 public class AppRoleAuthMethodValidator implements Validator {
     @Override
@@ -32,11 +32,11 @@ public class AppRoleAuthMethodValidator implements Validator {
         ValidationResult result = new ValidationResult();
 
         if (secretConfig.isAppRoleAuthentication()) {
-            if (isEmpty(secretConfig.getRoleId())) {
+            if (isBlank(secretConfig.getRoleId())) {
                 result.add("RoleId", "RoleId must not be blank.");
             }
 
-            if (isEmpty(secretConfig.getSecretId())) {
+            if (isBlank(secretConfig.getSecretId())) {
                 result.add("SecretId", "SecretId must not be blank.");
             }
         }

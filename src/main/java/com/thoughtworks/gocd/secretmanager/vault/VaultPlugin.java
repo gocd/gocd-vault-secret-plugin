@@ -40,6 +40,10 @@ import static java.util.Collections.singletonList;
 public class VaultPlugin implements GoPlugin {
     private RequestDispatcher requestDispatcher;
 
+    public static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
     @Override
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
         requestDispatcher = BaseBuilder

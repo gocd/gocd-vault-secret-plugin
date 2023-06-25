@@ -22,7 +22,8 @@ import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.isBlank;
+
 
 public class TokenAuthMethodValidator implements Validator {
     @Override
@@ -32,7 +33,7 @@ public class TokenAuthMethodValidator implements Validator {
         ValidationResult result = new ValidationResult();
 
         if (secretConfig.isTokenAuthentication()) {
-            if (isEmpty(secretConfig.getToken())) {
+            if (isBlank(secretConfig.getToken())) {
                 result.add("Token", "Token must not be blank.");
             }
         }

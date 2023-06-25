@@ -58,7 +58,7 @@ ext {
 
 dependencies {
   compileOnly project.deps.gocdPluginApi
-  implementation group: 'cd.go.plugin.base', name: 'gocd-plugin-base', version: '0.0.2'
+  implementation group: 'cd.go.plugin.base', name: 'gocd-plugin-base', version: '0.0.5'
   implementation group: 'com.bettercloud', name: 'vault-java-driver', version: '5.1.0'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 

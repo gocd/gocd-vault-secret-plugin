@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.isBlank;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class SecretConfig {
     private static final Gson GSON = new GsonBuilder().
