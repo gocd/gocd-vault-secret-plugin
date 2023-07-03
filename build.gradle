@@ -38,8 +38,10 @@ gocdPlugin {
   assetsToRelease = [project.tasks.findByName('jar')]
 }
 
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+java {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
 
 version = gocdPlugin.fullVersion(project)
 
