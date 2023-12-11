@@ -23,7 +23,7 @@ import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.*;
 
-public class VaultConfigBuilder {
+public abstract class VaultConfigBuilder {
     public VaultConfig configFrom(SecretConfig secretConfig) throws VaultException {
         VaultConfig request = new VaultConfig()
                 .address(secretConfig.getVaultUrl())
