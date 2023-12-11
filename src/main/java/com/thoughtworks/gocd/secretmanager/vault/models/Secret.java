@@ -17,15 +17,10 @@
 package com.thoughtworks.gocd.secretmanager.vault.models;
 
 import com.google.gson.annotations.Expose;
+import lombok.Value;
 
+@Value
 public class Secret {
-    @Expose
-    private String key;
-    @Expose
-    private String value;
-
-    Secret(String key, String value) {
-        this.key = key;
-        this.value = value;
-    }
+    @Expose String key;
+    @Expose String value;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 ThoughtWorks, Inc.
+ * Copyright 2023 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.isBlank;
 import static java.util.Arrays.asList;
 
+@Getter
+@EqualsAndHashCode
+@NoArgsConstructor
 public class SecretConfig {
     private static final Gson GSON = new GsonBuilder().
             excludeFieldsWithoutExposeAnnotation().
@@ -115,18 +120,6 @@ public class SecretConfig {
     @Property(name = "ServerPem", secure = true)
     private String serverPem;
 
-    public String getVaultUrl() {
-        return vaultUrl;
-    }
-
-    public String getVaultPath() {
-        return vaultPath;
-    }
-
-    public String getNameSpace() {
-        return nameSpace;
-    }
-
     public Integer getConnectionTimeout() {
         if (isBlank(connectionTimeout)) {
             return DEFAULT_CONNECTION_TIMEOUT;
@@ -155,34 +148,6 @@ public class SecretConfig {
         return Integer.valueOf(retryIntervalMilliseconds);
     }
 
-    public String getAuthMethod() {
-        return authMethod;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public String getSecretId() {
-        return secretId;
-    }
-
-    public String getClientKeyPem() {
-        return clientKeyPem;
-    }
-
-    public String getClientPem() {
-        return clientPem;
-    }
-
-    public String getServerPem() {
-        return serverPem;
-    }
-
     public boolean isAuthMethodSupported() {
         return SUPPORTED_AUTH_METHODS.contains(authMethod.toLowerCase());
     }
@@ -190,32 +155,6 @@ public class SecretConfig {
     public static SecretConfig fromJSON(Map<String, String> request) {
         String json = GsonTransformer.toJson(request);
         return GSON.fromJson(json, SecretConfig.class);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SecretConfig that = (SecretConfig) o;
-        return Objects.equals(vaultUrl, that.vaultUrl) &&
-                Objects.equals(vaultPath, that.vaultPath) &&
-                Objects.equals(nameSpace, that.nameSpace) &&
-                Objects.equals(connectionTimeout, that.connectionTimeout) &&
-                Objects.equals(readTimeout, that.readTimeout) &&
-                Objects.equals(maxRetries, that.maxRetries) &&
-                Objects.equals(retryIntervalMilliseconds, that.retryIntervalMilliseconds) &&
-                Objects.equals(authMethod, that.authMethod) &&
-                Objects.equals(token, that.token) &&
-                Objects.equals(roleId, that.roleId) &&
-                Objects.equals(secretId, that.secretId) &&
-                Objects.equals(clientKeyPem, that.clientKeyPem) &&
-                Objects.equals(clientPem, that.clientPem) &&
-                Objects.equals(serverPem, that.serverPem);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(vaultUrl, vaultPath, nameSpace, connectionTimeout, readTimeout, maxRetries, retryIntervalMilliseconds, authMethod, token, roleId, secretId, clientKeyPem, clientPem, serverPem);
     }
 
     public boolean isTokenAuthentication() {

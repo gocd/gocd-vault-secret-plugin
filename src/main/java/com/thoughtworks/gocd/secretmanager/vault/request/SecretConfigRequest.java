@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 ThoughtWorks, Inc.
+ * Copyright 2023 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,13 @@ package com.thoughtworks.gocd.secretmanager.vault.request;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Getter
+@NoArgsConstructor
 public class SecretConfigRequest {
     @Expose
     @SerializedName("configuration")
@@ -30,15 +34,4 @@ public class SecretConfigRequest {
     @Expose
     @SerializedName("keys")
     private List<String> keys;
-
-    public SecretConfigRequest() {
-    }
-
-    public SecretConfig getConfiguration() {
-        return configuration;
-    }
-
-    public List<String> getKeys() {
-        return keys;
-    }
 }
