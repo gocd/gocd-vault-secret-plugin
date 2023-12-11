@@ -17,14 +17,16 @@
 package com.thoughtworks.gocd.secretmanager.vault;
 
 import cd.go.plugin.base.executors.secrets.LookupExecutor;
+import com.thoughtworks.gocd.secretmanager.vault.models.Secret;
 import io.github.jopenlibs.vault.Vault;
 
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import com.thoughtworks.gocd.secretmanager.vault.models.Secrets;
 import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static cd.go.plugin.base.GsonTransformer.fromJson;
@@ -46,7 +48,7 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
     @Override
     protected GoPluginApiResponse execute(SecretConfigRequest request) {
         try {
-            final Secrets secrets = new Secrets();
+            final List<Secret> secrets = new ArrayList<>();
             final Vault vault = vaultProvider.vaultFor(request.getConfiguration());
 
             final Map<String, String> secretsFromVault = vault.logical()
@@ -55,7 +57,7 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
 
             for (String key : request.getKeys()) {
                 if (secretsFromVault.containsKey(key)) {
-                    secrets.add(key, secretsFromVault.get(key));
+                    secrets.add(new Secret(key, secretsFromVault.get(key)));
                 }
             }
 
