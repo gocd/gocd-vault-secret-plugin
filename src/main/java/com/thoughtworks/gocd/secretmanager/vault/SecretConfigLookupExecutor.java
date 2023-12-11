@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 ThoughtWorks, Inc.
+ * Copyright 2023 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@
 package com.thoughtworks.gocd.secretmanager.vault;
 
 import cd.go.plugin.base.executors.secrets.LookupExecutor;
-import com.thoughtworks.gocd.secretmanager.vault.models.Secret;
-import io.github.jopenlibs.vault.Vault;
-
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import com.thoughtworks.gocd.secretmanager.vault.models.Secret;
 import com.thoughtworks.gocd.secretmanager.vault.request.SecretConfigRequest;
+import io.github.jopenlibs.vault.Vault;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,16 +48,33 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
     @Override
     protected GoPluginApiResponse execute(SecretConfigRequest request) {
         try {
+            final Map<String, Map<String, String>> vaultCache = new HashMap<>();
             final List<Secret> secrets = new ArrayList<>();
             final Vault vault = vaultProvider.vaultFor(request.getConfiguration());
 
-            final Map<String, String> secretsFromVault = vault.logical()
-                    .read(request.getConfiguration().getVaultPath())
-                    .getData();
+            for (String pathKey : request.getKeys()) {
+                String[] parts = pathKey.split(":", -1);
+                String path = request.getConfiguration().getVaultPath().replaceFirst("/+$", "");
+                String key;
+                if (parts.length == 2) {
+                    String subPath = parts[0].replaceFirst("^/+", "");
+                    if (subPath.length() > 0)
+                        path += "/" + subPath;
+                    key = parts[1];
+                }
+                else { // only `a:b` is treated specially, both `a` and `a:b:c:...` are treated as normal keys
+                    key = pathKey;
+                }
 
-            for (String key : request.getKeys()) {
+                Map<String, String> secretsFromVault = vaultCache.get(path);
+                if (secretsFromVault == null) {
+                    secretsFromVault = vault.logical()
+                                            .read(path)
+                                            .getData();
+                    vaultCache.put(path, secretsFromVault);
+                }
                 if (secretsFromVault.containsKey(key)) {
-                    secrets.add(new Secret(key, secretsFromVault.get(key)));
+                    secrets.add(new Secret(pathKey, secretsFromVault.get(key)));
                 }
             }
 

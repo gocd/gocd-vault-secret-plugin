@@ -31,6 +31,7 @@ public class SecretConfigRequest {
     @SerializedName("configuration")
     private SecretConfig configuration;
 
+    /** Keys are in the form <tt>[/][optional/extra/path:]key</tt>, the path is appended to the plugin vault path */
     @Expose
     @SerializedName("keys")
     private List<String> keys;

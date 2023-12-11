@@ -89,6 +89,13 @@ Alternatively, the configuration can be added directly to the config.xml using t
 | Max Retries                 | No       | Number of times to attempt to gather secrets from Vault. Defaults to `0`.                                                                                                                                                                                          |
 | Retry Interval Milliseconds | No       | Duration between retry attempts (set by `Max Retries`). Defaults to `100 milliseconds`.                                                                                                                                                                            |
 
+### Use the secret plugin in GoCD
+The complete path used to look up the secret in Vault is the concatenation of the plugin config `VaultPath`
+and the optional extra path specified in the secret key before `:`, assume the `VaultPath` given is `secret/gocd`, then:
+* `{{SECRET:[vault][my_key]}}` looks up the key `my_key` in the secret at `secret/gocd`
+* `{{SECRET:[vault][my_server:my_key]}}` looks up the key `my_key` in the secret at `secret/gocd/my_server`
+* `{{SECRET:[vault][/a/b/c/d:my_key]}}` looks up the key `my_key` in the secret at `secret/gocd/a/b/c/d`
+* `{{SECRET:[vault][a:b:my_key]}}` looks up the key `a:b:my_key` in the secret at `secret/gocd`
 
 ### Building the code base
 To build the jar, run `./gradlew clean test assemble`
