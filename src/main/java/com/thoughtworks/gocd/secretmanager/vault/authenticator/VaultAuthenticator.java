@@ -16,8 +16,8 @@
 
 package com.thoughtworks.gocd.secretmanager.vault.authenticator;
 
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultException;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 public interface VaultAuthenticator {

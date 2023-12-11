@@ -17,7 +17,7 @@
 package com.thoughtworks.gocd.secretmanager.vault;
 
 import cd.go.plugin.base.executors.secrets.LookupExecutor;
-import com.bettercloud.vault.Vault;
+import io.github.jopenlibs.vault.Vault;
 
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;

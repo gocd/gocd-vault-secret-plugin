@@ -16,9 +16,9 @@
 
 package com.thoughtworks.gocd.secretmanager.vault.builders;
 
-import com.bettercloud.vault.SslConfig;
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.SslConfig;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.*;

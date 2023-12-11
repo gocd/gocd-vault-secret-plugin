@@ -16,7 +16,7 @@
 
 package com.thoughtworks.gocd.secretmanager.vault.authenticator;
 
-import com.bettercloud.vault.Vault;
+import io.github.jopenlibs.vault.Vault;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 
 public class TokenAuthenticator implements VaultAuthenticator {

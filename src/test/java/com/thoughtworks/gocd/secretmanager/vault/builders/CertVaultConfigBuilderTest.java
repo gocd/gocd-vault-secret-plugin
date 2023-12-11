@@ -16,8 +16,8 @@
 
 package com.thoughtworks.gocd.secretmanager.vault.builders;
 
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
 import com.thoughtworks.gocd.secretmanager.vault.models.SecretConfig;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

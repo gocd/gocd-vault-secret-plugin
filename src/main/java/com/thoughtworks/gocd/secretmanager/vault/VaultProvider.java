@@ -16,9 +16,9 @@
 
 package com.thoughtworks.gocd.secretmanager.vault;
 
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
 import com.thoughtworks.gocd.secretmanager.vault.authenticator.VaultAuthenticator;
 import com.thoughtworks.gocd.secretmanager.vault.authenticator.VaultAuthenticatorFactory;
 import com.thoughtworks.gocd.secretmanager.vault.builders.VaultConfigBuilder;
@@ -44,7 +44,7 @@ public class VaultProvider {
         VaultConfig vaultConfig = configBuilder.configFrom(secretConfig);
 
         VaultAuthenticator vaultAuthenticator = vaultAuthenticatorFactory.authenticatorFor(secretConfig);
-        Vault vault = new Vault(vaultConfig)
+        Vault vault = Vault.create(vaultConfig)
                 .withRetries(secretConfig.getMaxRetries(), secretConfig.getRetryIntervalMilliseconds());
 
         String token = vaultAuthenticator.authenticate(vault, secretConfig);
