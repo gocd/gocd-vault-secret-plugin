@@ -76,7 +76,7 @@ Alternatively, the configuration can be added directly to the config.xml using t
 | Field                       | Required | Description                                                                                                                                                                                                                                                        |
 |-----------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | VaultUrl                    | Yes      | The url of the Vault server instance. If no address is explicitly set, the plugin will look to the `VAULT_ADDR` environment variable.                                                                                                                              |
-| VaultPath                   | Yes      | The vault path which holds the secrets as key-value pair (e.g. `secret/gocd`)                                                                                                                                                                                      |
+| VaultPath                   | Yes      | The root vault path which holds the secrets, and should be prepended to all secret values (e.g. `secret/gocd`)                                                                                                                                                     |
 | ConnectionTimeout           | No       | The number of seconds to wait before giving up on establishing an HTTP(s) connection to the Vault server. If no openTimeout is explicitly set, then the object will look to the `VAULT_OPEN_TIMEOUT` environment variable. Defaults to `5 seconds`.                |
 | ReadTimeout                 | No       | Once connection has already been established, this is the number of seconds to wait for all data to finish downloading. If no readTimeout is explicitly set, then the object will look to the `VAULT_READ_TIMEOUT` environment variable. Defaults to `30 seconds`. |
 | ServerPem                   | No       | An X.509 certificate, in unencrypted PEM format with UTF-8 encoding to use when communicating with Vault over HTTPS                                                                                                                                                |
@@ -89,13 +89,18 @@ Alternatively, the configuration can be added directly to the config.xml using t
 | Max Retries                 | No       | Number of times to attempt to gather secrets from Vault. Defaults to `0`.                                                                                                                                                                                          |
 | Retry Interval Milliseconds | No       | Duration between retry attempts (set by `Max Retries`). Defaults to `100 milliseconds`.                                                                                                                                                                            |
 
-### Use the secret plugin in GoCD
-The complete path used to look up the secret in Vault is the concatenation of the plugin config `VaultPath`
-and the optional extra path specified in the secret key before `:`, assume the `VaultPath` given is `secret/gocd`, then:
+### Using the secret plugin in GoCD
+Since version `1.3.0`, the complete path used to look up the secret in Vault can be varied on individual secret
+retrieval, allowing a given Secret Configuration to be shared for all paths within a given root.
+
+Sub-paths can be optionally configured by prefixing the key with `subpath:`, i.e the retrieved path is the concatenation of the 
+plugin config `VaultPath` and the optional extra path specified in the secret key before `:`.
+
+Assuming the the `vault` config's root `VaultPath` is `secret/gocd`, then:
 * `{{SECRET:[vault][my_key]}}` looks up the key `my_key` in the secret at `secret/gocd`
 * `{{SECRET:[vault][my_server:my_key]}}` looks up the key `my_key` in the secret at `secret/gocd/my_server`
 * `{{SECRET:[vault][/a/b/c/d:my_key]}}` looks up the key `my_key` in the secret at `secret/gocd/a/b/c/d`
-* `{{SECRET:[vault][a:b:my_key]}}` looks up the key `a:b:my_key` in the secret at `secret/gocd`
+* `{{SECRET:[vault][a:b:my_key]}}` looks up the key `a:b:my_key` in the secret at `secret/gocd` (_multiple `:`s are ignored_)
 
 ### Building the code base
 To build the jar, run `./gradlew clean test assemble`
