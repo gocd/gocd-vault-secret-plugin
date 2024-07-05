@@ -79,7 +79,7 @@ dependencies {
   testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: project.versions.mockito
   testImplementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
   testImplementation project.deps.gocdPluginApi
-  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.1'
+  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.3'
 }
 
 test {
