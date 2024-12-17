@@ -26,6 +26,7 @@ import static com.thoughtworks.gocd.secretmanager.vault.VaultPlugin.*;
 public abstract class VaultConfigBuilder {
     public VaultConfig configFrom(SecretConfig secretConfig) throws VaultException {
         VaultConfig request = new VaultConfig()
+                .engineVersion(2)
                 .address(secretConfig.getVaultUrl())
                 .openTimeout(secretConfig.getConnectionTimeout())
                 .readTimeout(secretConfig.getReadTimeout())
