@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id "io.freefair.lombok" version "8.13"
+  id "io.freefair.lombok" version "8.13.1"
 }
 
 apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
