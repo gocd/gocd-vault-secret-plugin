@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id "io.freefair.lombok" version "8.14"
+  id "io.freefair.lombok" version "8.14.2"
 }
 
 apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
@@ -55,8 +55,8 @@ repositories {
 
 ext {
   deps = [
-    gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.2.0',
-    mockito      : 'org.mockito:mockito-core:5.18.0',
+    gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.3.0',
+    mockito      : 'org.mockito:mockito-core:5.19.0',
   ]
 
   versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
@@ -64,7 +64,7 @@ ext {
 
 dependencies {
   compileOnly project.deps.gocdPluginApi
-  implementation group: 'cd.go.plugin.base', name: 'gocd-plugin-base', version: '1.0.4'
+  implementation group: 'cd.go.plugin.base', name: 'gocd-plugin-base', version: '1.0.5'
   implementation group: 'io.github.jopenlibs', name: 'vault-java-driver', version: '6.2.0'
 
   testImplementation platform('org.junit:junit-bom:5.13.4')
@@ -73,10 +73,10 @@ dependencies {
   testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
   testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher'
 
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.3'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.4'
   testImplementation project.deps.mockito
   testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: project.versions.mockito
-  testImplementation group: 'org.jsoup', name: 'jsoup', version: '1.21.1'
+  testImplementation group: 'org.jsoup', name: 'jsoup', version: '1.21.2'
   testImplementation project.deps.gocdPluginApi
   testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.3'
 }
