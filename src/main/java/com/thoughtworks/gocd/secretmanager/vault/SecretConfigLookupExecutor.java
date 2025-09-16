@@ -55,7 +55,7 @@ class SecretConfigLookupExecutor extends LookupExecutor<SecretConfigRequest> {
 
                 Map<String, String> secretsFromVault = vaultCache.computeIfAbsent(resolved.path, p -> {
                     try {
-                        LOGGER.info("Looking up secrets from vault [{}] at resolved path [{}]",
+                        LOGGER.debug("Looking up secrets from vault [{}] at resolved path [{}]",
                                 request.getConfiguration().getVaultUrl(), p);
                         return vault.logical().read(p).getData();
                     } catch (Exception e) {
