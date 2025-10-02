@@ -68,21 +68,21 @@ ext {
 
 dependencies {
   compileOnly project.deps.gocdPluginApi
-  implementation group: 'cd.go.plugin.base', name: 'gocd-plugin-base', version: '1.1.0'
-  implementation group: 'io.github.jopenlibs', name: 'vault-java-driver', version: '6.2.0'
+  implementation 'cd.go.plugin.base:gocd-plugin-base:1.1.0'
+  implementation 'io.github.jopenlibs:vault-java-driver:6.2.0'
 
   testImplementation platform('org.junit:junit-bom:6.0.0')
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api'
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params'
-  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
-  testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.6'
+  testImplementation 'org.assertj:assertj-core:3.27.6'
   testImplementation project.deps.mockito
-  testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: project.versions.mockito
-  testImplementation group: 'org.jsoup', name: 'jsoup', version: '1.21.2'
+  testImplementation "org.mockito:mockito-junit-jupiter:${project.versions.mockito}"
+  testImplementation 'org.jsoup:jsoup:1.21.2'
   testImplementation project.deps.gocdPluginApi
-  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.3'
+  testImplementation 'org.skyscreamer:jsonassert:1.5.3'
 }
 
 test {
