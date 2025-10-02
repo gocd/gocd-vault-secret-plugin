@@ -15,11 +15,10 @@
  */
 
 plugins {
+  id 'java'
   id "io.freefair.lombok" version "9.0.0"
 }
-
 apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
-apply plugin: 'java'
 
 gocdPlugin {
   id = 'com.thoughtworks.gocd.secretmanager.vault'
