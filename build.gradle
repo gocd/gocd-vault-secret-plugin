@@ -68,7 +68,7 @@ ext {
 
 dependencies {
   compileOnly project.deps.gocdPluginApi
-  implementation 'cd.go.plugin.base:gocd-plugin-base:1.1.0'
+  implementation 'cd.go.plugin.base:gocd-plugin-base:1.1.1'
   implementation 'io.github.jopenlibs:vault-java-driver:6.2.1'
 
   testImplementation platform('org.junit:junit-bom:6.0.1')
