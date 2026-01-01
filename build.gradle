@@ -59,8 +59,8 @@ repositories {
 
 ext {
   deps = [
-    gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.3.0',
-    mockito      : 'org.mockito:mockito-core:5.20.0',
+    gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.4.0',
+    mockito      : 'org.mockito:mockito-core:5.21.0',
   ]
 
   versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
@@ -80,7 +80,7 @@ dependencies {
   testImplementation 'org.assertj:assertj-core:3.27.6'
   testImplementation project.deps.mockito
   testImplementation "org.mockito:mockito-junit-jupiter:${project.versions.mockito}"
-  testImplementation 'org.jsoup:jsoup:1.21.2'
+  testImplementation 'org.jsoup:jsoup:1.22.1'
   testImplementation project.deps.gocdPluginApi
   testImplementation 'org.skyscreamer:jsonassert:1.5.3'
 }
