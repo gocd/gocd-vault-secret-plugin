@@ -16,7 +16,7 @@
 
 plugins {
   id 'java'
-  id "io.freefair.lombok" version "9.1.0"
+  id "io.freefair.lombok" version "9.2.0"
 }
 apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
 
@@ -71,7 +71,7 @@ dependencies {
   implementation 'cd.go.plugin.base:gocd-plugin-base:1.1.1'
   implementation 'io.github.jopenlibs:vault-java-driver:6.2.1'
 
-  testImplementation platform('org.junit:junit-bom:6.0.1')
+  testImplementation platform('org.junit:junit-bom:6.0.2')
   testImplementation 'org.junit.jupiter:junit-jupiter-api'
   testImplementation 'org.junit.jupiter:junit-jupiter-params'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
