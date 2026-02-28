@@ -16,13 +16,12 @@
 
 package com.thoughtworks.gocd.secretmanager.vault;
 
+import cd.go.plugin.base.test_helper.annotations.JsonSource;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
-import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.request.DefaultGoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import com.thoughtworks.gocd.secretmanager.vault.annotations.JsonSource;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
