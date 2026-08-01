@@ -59,8 +59,8 @@ repositories {
 
 ext {
   deps = [
-    gocdPluginApi : 'cd.go.plugin:go-plugin-api:25.4.0',
-    gocdPluginBase: 'cd.go.plugin.base:gocd-plugin-base:2.0.1',
+    gocdPluginApi : 'cd.go.plugin:go-plugin-api:26.1.0',
+    gocdPluginBase: 'cd.go.plugin.base:gocd-plugin-base:2.0.2',
     mockito       : 'org.mockito:mockito-core:5.23.0',
   ]
 
@@ -72,7 +72,7 @@ dependencies {
   implementation project.deps.gocdPluginBase
   implementation 'io.github.jopenlibs:vault-java-driver:6.2.2'
 
-  testImplementation platform('org.junit:junit-bom:6.1.1')
+  testImplementation platform('org.junit:junit-bom:6.1.2')
   testImplementation 'org.junit.jupiter:junit-jupiter-api'
   testImplementation 'org.junit.jupiter:junit-jupiter-params'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
